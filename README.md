@@ -40,7 +40,7 @@ npm run build    # regenera el index.html autónomo con los cambios
 - Autenticación y registro (no se guardan contraseñas ni se verifica la identidad).
 - Mensajería (las respuestas son automáticas).
 - Publicaciones, "me gusta", guardados e intereses: viven solo en la memoria del navegador y se reinician al recargar.
-- Eventos: fechas, horarios y lugares son ilustrativos.
+- Eventos "demo": fechas, horarios y lugares ilustrativos.
 - No hay pagos, comisiones ni backend.
 
 ## Estructura
