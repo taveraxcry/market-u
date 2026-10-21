@@ -5,6 +5,7 @@ import { STORY_BACKGROUNDS } from '../data/sampleData.js';
 import { useI18n } from '../i18n/LanguageContext.jsx';
 import Avatar from './Avatar.jsx';
 import { haptic } from '../utils/format.js';
+import { PhotoCredit } from './PhotoCredits.jsx';
 import { REF_LABELS } from './postTypes.js';
 
 const DURATION = 5000; // ms per story
@@ -299,6 +300,7 @@ function Viewer({ queue, start }) {
             <p key={`${item.id}-caption`} className="story-caption">{tx(item.text)}</p>
           )}
           {likeBurst > 0 && <Heart key={likeBurst} className="story-like-burst" size={96} fill="currentColor" />}
+          {showImage && <PhotoCredit src={item.image} className="photo-credit--story" />}
         </div>
 
         {refItem && (

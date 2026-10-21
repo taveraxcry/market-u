@@ -290,7 +290,7 @@ function RegisterForm({ onSwitch }) {
 function HeroPreview() {
   const { t, tx } = useI18n();
   const product = initialProducts[3];
-  const event = initialEvents[0];
+  const event = initialEvents.find((e) => e.featured) || initialEvents[0];
   return (
     <div className="preview" aria-hidden="true">
       <div className="preview__card preview__card--event">

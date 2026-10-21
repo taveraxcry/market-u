@@ -3,6 +3,7 @@ import { Search, SearchX } from 'lucide-react';
 import { useApp } from '../context/AppContext.jsx';
 import { useI18n } from '../i18n/LanguageContext.jsx';
 import { matchesQuery } from '../utils/format.js';
+import { INSTITUTIONS } from '../data/sampleData.js';
 import EmptyState from '../components/EmptyState.jsx';
 import EventCard from '../components/EventCard.jsx';
 import PostCard from '../components/PostCard.jsx';
@@ -18,7 +19,7 @@ export default function SearchPage() {
   const results = {
     products: products.filter((p) => matchesQuery(q, p.title, p.description, p.category, tc(p.category))),
     services: services.filter((s) => matchesQuery(q, s.name, s.description, s.category, tc(s.category), getPerson(s.providerId).name)),
-    events: events.filter((e) => matchesQuery(q, e.name, e.description, e.category, tc(e.category), e.location)),
+    events: events.filter((e) => matchesQuery(q, e.name, e.description, e.category, tc(e.category), e.location, INSTITUTIONS[e.institution]?.name, INSTITUTIONS[e.institution]?.short)),
     posts: posts.filter((p) => matchesQuery(q, p.text, getPerson(p.authorId).name)),
   };
   const total = Object.values(results).reduce((sum, r) => sum + r.length, 0);

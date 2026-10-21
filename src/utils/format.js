@@ -48,3 +48,19 @@ export function haptic(ms = 10) {
     /* not supported */
   }
 }
+
+/** Today's date as YYYY-MM-DD in the device's time zone. */
+export function todayISO(now = new Date()) {
+  const p = (n) => String(n).padStart(2, '0');
+  return `${now.getFullYear()}-${p(now.getMonth() + 1)}-${p(now.getDate())}`;
+}
+
+/** 'past' | 'today' | 'live' (multi-day, in progress) | 'upcoming' */
+export function eventStatus(event, today = todayISO()) {
+  const end = event.endDate || event.date;
+  if (end < today) return 'past';
+  if (event.date <= today) return event.endDate && event.endDate !== event.date ? 'live' : 'today';
+  return 'upcoming';
+}
+
+export const isPast = (event) => eventStatus(event) === 'past';

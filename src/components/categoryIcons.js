@@ -1,5 +1,5 @@
 import {
-  BookOpen, Briefcase, Cake, CalendarDays, Camera, Dumbbell, Gem, GraduationCap, Laptop, Lightbulb,
+  HeartHandshake, BookOpen, Briefcase, Cake, CalendarDays, Camera, Dumbbell, Gem, GraduationCap, Laptop, Lightbulb,
   Megaphone, Music, Package, Palette, Rocket, Shirt, Sofa, Users, UtensilsCrossed,
 } from 'lucide-react';
 
@@ -20,6 +20,7 @@ export const CATEGORY_ICONS = {
   Culturales: Music,
   Sociales: Users,
   Emprendimiento: Rocket,
+  Comunidad: HeartHandshake,
   servicio: Briefcase,
   emprendimiento: Lightbulb,
   evento: CalendarDays,
@@ -44,6 +45,7 @@ export const CATEGORY_TINTS = {
   Culturales: ['#9D174D', '#F472B6'],
   Sociales: ['#0F766E', '#2DD4BF'],
   Emprendimiento: ['#B45309', '#FBBF24'],
+  Comunidad: ['#D4461F', '#F5A524'],
 };
 
 export function iconFor(category) {

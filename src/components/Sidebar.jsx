@@ -4,6 +4,7 @@ import { useApp } from '../context/AppContext.jsx';
 import { useI18n } from '../i18n/LanguageContext.jsx';
 import Avatar from './Avatar.jsx';
 import Logo from './Logo.jsx';
+import PhotoCreditsButton from './PhotoCredits.jsx';
 import { NAV_SECTIONS } from './navigation.js';
 
 export default function Sidebar() {
@@ -152,6 +153,7 @@ export default function Sidebar() {
         </button>
 
         <p className="sidebar__foot">{t('sidebar.foot')}</p>
+        <PhotoCreditsButton className="sidebar__credits" />
       </aside>
     </>
   );

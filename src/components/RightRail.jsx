@@ -1,13 +1,15 @@
 import { ArrowRight, CalendarDays, Info, Lightbulb, Star, TrendingUp } from 'lucide-react';
 import { useApp } from '../context/AppContext.jsx';
 import { useI18n } from '../i18n/LanguageContext.jsx';
+import { eventStatus } from '../utils/format.js';
 import Avatar from './Avatar.jsx';
+import PhotoCreditsButton from './PhotoCredits.jsx';
 import SmartImage from './SmartImage.jsx';
 
 export default function RightRail() {
   const { events, services, products, setView, setDetail, getPerson, interested } = useApp();
   const { t, tx, tc, eventDateParts } = useI18n();
-  const upcoming = [...events].sort((a, b) => a.date.localeCompare(b.date)).slice(0, 4);
+  const upcoming = events.filter((e) => eventStatus(e) !== 'past').sort((a, b) => a.date.localeCompare(b.date)).slice(0, 4);
   const businesses = services.filter((s) => s.kind === 'emprendimiento').slice(0, 3);
 
   return (
@@ -73,7 +75,7 @@ export default function RightRail() {
 
       <section className="rail__people">
         <h2>{t('rail.activeNow')}</h2>
-        {['valentina', 'santiago', 'mariana', 'julian'].map((id) => {
+        {['isabella', 'santiago', 'mateo', 'mariana'].map((id) => {
           const p = getPerson(id);
           return (
             <div key={id} className="rail-person">
@@ -87,6 +89,7 @@ export default function RightRail() {
       <p className="rail__legal">
         <Info size={13} /> {t('rail.legal')}
       </p>
+      <PhotoCreditsButton className="rail__credits" />
     </aside>
   );
 }

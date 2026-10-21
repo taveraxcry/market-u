@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { useI18n } from '../i18n/LanguageContext.jsx';
 
@@ -65,7 +66,8 @@ export default function Modal({ open, onClose, title, children, size = 'md', foo
 
   if (!open) return null;
 
-  return (
+  // Rendered at the end of <body> so no parent (sticky sidebar, rail…) can sit on top of it.
+  return createPortal(
     <div className="modal-backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
       <div
         className={`modal modal--${size} ${className}`}
@@ -89,6 +91,7 @@ export default function Modal({ open, onClose, title, children, size = 'md', foo
         <div className="modal__body">{children}</div>
         {footer && <footer className="modal__footer">{footer}</footer>}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

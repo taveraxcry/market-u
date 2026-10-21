@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { CalendarDays, Newspaper } from 'lucide-react';
 import { useApp } from '../context/AppContext.jsx';
 import { useI18n } from '../i18n/LanguageContext.jsx';
+import { eventStatus } from '../utils/format.js';
 import Composer from '../components/Composer.jsx';
 import EmptyState from '../components/EmptyState.jsx';
 import PostCard from '../components/PostCard.jsx';
 import RightRail from '../components/RightRail.jsx';
+import { EventStatusPill } from '../components/EventCard.jsx';
 import SmartImage from '../components/SmartImage.jsx';
 import StoriesBar from '../components/StoriesBar.jsx';
 import { POST_TYPES } from '../components/postTypes.js';
@@ -23,7 +25,7 @@ const FEED_FILTERS = [
 function EventsStrip() {
   const { events, setDetail, setView } = useApp();
   const { t, tx, tc, eventDateParts } = useI18n();
-  const upcoming = [...events].sort((a, b) => a.date.localeCompare(b.date)).slice(0, 6);
+  const upcoming = events.filter((e) => eventStatus(e) !== 'past').sort((a, b) => a.date.localeCompare(b.date)).slice(0, 6);
   return (
     <section className="events-strip" aria-label={t('rail.upcoming')}>
       <header className="events-strip__head">
@@ -38,6 +40,7 @@ function EventsStrip() {
               <SmartImage src={e.image} alt="" category={e.category} className="events-strip__img" />
               <span className="events-strip__shade" />
               <span className="events-strip__date"><strong>{day}</strong><small>{month}</small></span>
+              <EventStatusPill event={e} className="events-strip__status" />
               <span className="events-strip__text">
                 <small>{tc(e.category)}</small>
                 <strong>{tx(e.name)}</strong>

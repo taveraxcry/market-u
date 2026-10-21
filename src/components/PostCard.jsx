@@ -5,6 +5,8 @@ import { useI18n } from '../i18n/LanguageContext.jsx';
 import { formatCOP, haptic } from '../utils/format.js';
 import Avatar from './Avatar.jsx';
 import SmartImage from './SmartImage.jsx';
+import { INSTITUTIONS } from '../data/sampleData.js';
+import { PhotoCredit } from './PhotoCredits.jsx';
 import StoryAvatar from './StoryAvatar.jsx';
 import { POST_TYPES, REF_LABELS } from './postTypes.js';
 
@@ -93,6 +95,7 @@ export default function PostCard({ post }) {
           <strong>{author.name}</strong>
           <span>
             {author.program && <>{tx(author.program)} · </>}
+            {author.uni && INSTITUTIONS[author.uni] && <><b className="post__uni">{tx(INSTITUTIONS[author.uni].short)}</b> · </>}
             {timeAgo(post.createdAt)}
           </span>
         </div>
@@ -114,6 +117,7 @@ export default function PostCard({ post }) {
         <div className="post__media" onDoubleClick={doubleLike} onPointerUp={onMediaTap} title={t('post.doubleTap')}>
           <SmartImage src={post.image} alt={t('post.imageAlt', { name: author.name })} category={post.type} className="post__img" />
           {burst > 0 && <Heart key={burst} className="post__burst" size={110} fill="currentColor" aria-hidden="true" />}
+          <PhotoCredit src={post.image} className="photo-credit--corner" />
         </div>
       )}
 

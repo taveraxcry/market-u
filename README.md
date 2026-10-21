@@ -29,6 +29,12 @@ npm run build    # regenera el index.html autónomo con los cambios
 - `dev.html` es la plantilla de desarrollo (usada por `npm run dev`).
 - `index.html` es un archivo **generado** que contiene toda la app. No lo edites a mano: cambia `src/` y ejecuta `npm run build`.
 
+## Contenido real y contenido de ejemplo
+
+- **Eventos con "Fuente"**: son reales (UAM, U. Nacional sede Manizales, U. de Caldas y la ciudad) y se tomaron de sitios oficiales y medios en octubre de 2026. Cada uno enlaza su fuente. Se marcan como pasados o próximos según la fecha del dispositivo.
+- **Eventos "demo"**, personas, publicaciones, productos, servicios y chats: son ficticios, aunque hablen de lugares y eventos reales.
+- **Fotos de Manizales y sus universidades**: reales, de Wikimedia Commons con licencia libre. Los créditos están en la app ("Créditos de fotos") y en src/data/photos.js.
+
 ## Qué es simulado
 
 - Autenticación y registro (no se guardan contraseñas ni se verifica la identidad).

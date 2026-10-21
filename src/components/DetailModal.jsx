@@ -1,7 +1,10 @@
-import { Bookmark, Clock, Info, MapPin, MessageCircle, ShieldCheck, Star, Tag, Users } from 'lucide-react';
+import { BadgeCheck, Bookmark, Clock, ExternalLink, Info, MapPin, MessageCircle, ShieldCheck, Sparkles, Star, Tag, Users } from 'lucide-react';
+import { INSTITUTIONS } from '../data/sampleData.js';
 import { useApp } from '../context/AppContext.jsx';
 import { useI18n } from '../i18n/LanguageContext.jsx';
-import { formatCOP } from '../utils/format.js';
+import { eventStatus, formatCOP } from '../utils/format.js';
+import { EventStatusPill } from './EventCard.jsx';
+import { PhotoCredit } from './PhotoCredits.jsx';
 import Avatar from './Avatar.jsx';
 import Modal from './Modal.jsx';
 import SmartImage from './SmartImage.jsx';
@@ -22,7 +25,7 @@ function PersonRow({ person, role }) {
 
 export default function DetailModal() {
   const { detail, setDetail, findItem, getPerson, openContact, isSaved, toggleSave, interested, toggleInterest } = useApp();
-  const { t, tx, tc, tCondition, tContact, timeAgo, eventDate, formatTime } = useI18n();
+  const { t, tx, tc, tCondition, tContact, timeAgo, eventRange, formatTime } = useI18n();
   const item = detail ? findItem(detail.kind, detail.id) : null;
   const close = () => setDetail(null);
   if (!detail || !item) return null;
@@ -45,7 +48,10 @@ export default function DetailModal() {
     const title = tx(item.title);
     body = (
       <div className="detail">
-        <SmartImage src={item.image} alt={title} category={item.category} className="detail__img" />
+        <div className="detail__img-wrap">
+          <SmartImage src={item.image} alt={title} category={item.category} className="detail__img" />
+          <PhotoCredit src={item.image} className="photo-credit--corner" />
+        </div>
         <div className="detail__info">
           <span className="pill pill--soft"><Tag size={13} /> {tc(item.category)}</span>
           <h2 className="detail__title">{title}</h2>
@@ -74,7 +80,10 @@ export default function DetailModal() {
     const isBusiness = item.kind === 'emprendimiento';
     body = (
       <div className="detail">
-        <SmartImage src={item.image} alt={name} category={item.category} className="detail__img" />
+        <div className="detail__img-wrap">
+          <SmartImage src={item.image} alt={name} category={item.category} className="detail__img" />
+          <PhotoCredit src={item.image} className="photo-credit--corner" />
+        </div>
         <div className="detail__info">
           <span className="pill pill--soft">
             {isBusiness ? t('services.business') : t('services.service')} · {tc(item.category)}
@@ -102,32 +111,72 @@ export default function DetailModal() {
   } else {
     const isInterested = interested.has(item.id);
     const name = tx(item.name);
+    const past = eventStatus(item) === 'past';
+    const organizer = getPerson(item.organizerId);
+    const inst = INSTITUTIONS[item.institution];
     body = (
       <div className="detail detail--event">
-        <SmartImage src={item.image} alt={name} category={item.category} className="detail__banner" />
+        <div className="detail__banner-wrap">
+          <SmartImage src={item.image} alt={name} category={item.category} className={`detail__banner ${past ? 'is-past' : ''}`} />
+          <PhotoCredit src={item.image} className="photo-credit--corner" />
+        </div>
         <div className="detail__info">
           <div className="detail__tags">
             <span className="pill pill--coral">{tc(item.category)}</span>
-            {item.demo && <span className="pill pill--amber">{t('common.demoEvent')}</span>}
+            {item.demo ? (
+              <span className="pill pill--amber">{t('events.studentEvent')}</span>
+            ) : (
+              inst && <span className="pill pill--soft">{inst.name}</span>
+            )}
+            <EventStatusPill event={item} />
           </div>
           <h2 className="detail__title">{name}</h2>
           <ul className="detail__facts detail__facts--grid">
-            <li><Clock size={16} /> <span><strong>{eventDate(item.date)}</strong>{item.time && ` · ${formatTime(item.time)}`}</span></li>
+            <li>
+              <Clock size={16} />
+              <span><strong>{eventRange(item.date, item.endDate)}</strong>{item.time && ` · ${formatTime(item.time)}`}</span>
+            </li>
             <li><MapPin size={16} /> <span>{tx(item.location)}</span></li>
-            <li><Users size={16} /> <span>{t('events.interestedPeople', { n: item.interested })}</span></li>
+            <li>
+              <Users size={16} />
+              <span>{past ? t('events.interestedPast', { n: item.interested }) : t('events.interestedPeople', { n: item.interested })}</span>
+            </li>
           </ul>
           <h3>{t('detail.aboutEvent')}</h3>
           <p className="detail__desc">{tx(item.description)}</p>
-          <PersonRow person={getPerson(item.organizerId)} role={t('detail.organizer')} />
-          <div className="notice notice--amber">
-            <Info size={18} />
-            <p>{t('detail.illustrative')}</p>
-          </div>
+          {item.recap && past && (
+            <div className="recap">
+              <h3><Sparkles size={16} /> {t('detail.recap')}</h3>
+              <p>{tx(item.recap)}</p>
+            </div>
+          )}
+          <PersonRow person={organizer} role={t('detail.organizer')} />
+          {item.source ? (
+            <div className="notice notice--info">
+              <BadgeCheck size={18} />
+              <p>
+                {t('detail.sourceNote', { label: item.source.label })}
+                {item.tentative && <> {t('detail.tentativeNote')}</>}
+              </p>
+            </div>
+          ) : (
+            <div className="notice notice--amber">
+              <Info size={18} />
+              <p>{t('detail.illustrative')}</p>
+            </div>
+          )}
           <div className="detail__actions">
-            <button className={`btn ${isInterested ? 'btn--success' : 'btn--coral'}`} onClick={() => toggleInterest(item.id)} aria-pressed={isInterested}>
-              <Star size={18} fill={isInterested ? 'currentColor' : 'none'} /> {isInterested ? t('common.isInterested') : t('common.interested')}
-            </button>
-            {item.organizerId !== 'me' && (
+            {!past && (
+              <button className={`btn ${isInterested ? 'btn--success' : 'btn--coral'}`} onClick={() => toggleInterest(item.id)} aria-pressed={isInterested}>
+                <Star size={18} fill={isInterested ? 'currentColor' : 'none'} /> {isInterested ? t('common.isInterested') : t('common.interested')}
+              </button>
+            )}
+            {item.source && (
+              <a className="btn btn--soft" href={item.source.url} target="_blank" rel="noreferrer">
+                <ExternalLink size={17} /> {t('events.viewSource')}
+              </a>
+            )}
+            {!organizer.institution && item.organizerId !== 'me' && (
               <button className="btn btn--soft" onClick={contact}><MessageCircle size={18} /> {t('detail.askOrganizer')}</button>
             )}
             {saveButton}

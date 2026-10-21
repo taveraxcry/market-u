@@ -1,44 +1,69 @@
-// Datos de ejemplo del prototipo Market U, en español e inglés.
-// Todas las personas, publicaciones y eventos son ficticios.
+// Datos del prototipo Market U, en español e inglés.
+//
+// - Los EVENTOS marcados con `source` son reales: se tomaron de fuentes públicas
+//   (sitios de las universidades y medios) en octubre de 2026, y la app enlaza la fuente.
+// - Las PERSONAS, publicaciones, productos, servicios, chats y los eventos con `demo: true`
+//   son ficticios, aunque hablen de eventos y lugares reales de Manizales.
+// - Las fotos de lugares de Manizales son reales, con licencia libre (ver photos.js).
+
+import { photo } from './photos.js';
 
 const img = (id, w = 900) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=70`;
 const minutesAgo = (m) => Date.now() - m * 60 * 1000;
+/** Fixed date-time in Colombia (UTC-5). */
+const at = (date, time = '12:00') => new Date(`${date}T${time}:00-05:00`).getTime();
 const b = (es, en) => ({ es, en });
 
 export const DEMO_CREDENTIALS = { email: 'demo@marketu.app', password: 'MarketU2026' };
+export const DEMO_NAME = 'Salomé Vergara';
 
 export const UNIVERSITIES = [
   { id: 'uam', name: 'Universidad Autónoma de Manizales', available: true },
   { id: 'otras', nameKey: 'auth.otherUniversities', available: false },
 ];
 
-const CAMPUS = b('Entrega en el campus', 'Campus pickup');
+/** Where people and events come from. `short` is shown next to names. */
+export const INSTITUTIONS = {
+  uam: { short: 'UAM', name: 'Universidad Autónoma de Manizales', color: '#B8306F' },
+  unal: { short: 'U. Nacional', name: 'Universidad Nacional de Colombia · Sede Manizales', color: '#2F7D6D' },
+  ucaldas: { short: 'U. de Caldas', name: 'Universidad de Caldas', color: '#0E7C86' },
+  city: { short: 'Manizales', name: 'Manizales', color: '#9A6200' },
+  students: { short: b('Estudiantes', 'Students'), name: 'Estudiantes', color: '#7A3B9A' },
+};
+export const EVENT_INSTITUTIONS = ['uam', 'unal', 'ucaldas', 'city', 'students'];
+
+const UAM_PICKUP = b('Entrega en la UAM (Antigua Estación)', 'Pickup at UAM (Old Train Station)');
 
 export const PEOPLE = {
-  valentina: { id: 'valentina', name: 'Valentina Ríos', program: b('Diseño Visual', 'Visual Design'), color: '#7C3AED' },
-  santiago: { id: 'santiago', name: 'Santiago Cardona', program: b('Ingeniería de Sistemas', 'Systems Engineering'), color: '#0E7C86' },
-  mariana: { id: 'mariana', name: 'Mariana Ocampo', program: b('Administración de Empresas', 'Business Administration'), color: '#DB2777' },
-  julian: { id: 'julian', name: 'Julián Henao', program: b('Ingeniería Mecatrónica', 'Mechatronics Engineering'), color: '#2F7D6D' },
-  camila: { id: 'camila', name: 'Camila Arango', program: b('Negocios Internacionales', 'International Business'), color: '#EA580C' },
-  andres: { id: 'andres', name: 'Andrés Salazar', program: b('Economía', 'Economics'), color: '#059669' },
-  daniela: { id: 'daniela', name: 'Daniela Giraldo', program: b('Fisioterapia', 'Physical Therapy'), color: '#E11D48' },
-  tomas: { id: 'tomas', name: 'Tomás Villegas', program: b('Ingeniería Biomédica', 'Biomedical Engineering'), color: '#5B3FA0' },
-  laura: { id: 'laura', name: 'Laura Montoya', program: b('Lenguas Modernas', 'Modern Languages'), color: '#CA8A04' },
-  felipe: { id: 'felipe', name: 'Felipe Zuluaga', program: b('Comunicación Social', 'Communications'), color: '#0D9488' },
-  clubs: {
-    id: 'clubs',
-    name: 'Comité Estudiantil de Eventos',
-    program: b('Organización estudiantil (ficticia)', 'Student organization (fictional)'),
-    color: '#2B2833',
-  },
+  // ----- fictional students -----
+  valentina: { id: 'valentina', name: 'Valentina Ríos', uni: 'uam', program: b('Diseño Visual', 'Visual Design'), color: '#7C3AED' },
+  santiago: { id: 'santiago', name: 'Santiago Cardona', uni: 'uam', program: b('Ingeniería de Sistemas', 'Systems Engineering'), color: '#0E7C86' },
+  mariana: { id: 'mariana', name: 'Mariana Ocampo', uni: 'uam', program: b('Administración de Empresas', 'Business Administration'), color: '#DB2777' },
+  julian: { id: 'julian', name: 'Julián Henao', uni: 'uam', program: b('Ingeniería Mecatrónica', 'Mechatronics Engineering'), color: '#2F7D6D' },
+  camila: { id: 'camila', name: 'Camila Arango', uni: 'uam', program: b('Negocios Internacionales', 'International Business'), color: '#EA580C' },
+  andres: { id: 'andres', name: 'Andrés Salazar', uni: 'uam', program: b('Economía', 'Economics'), color: '#059669' },
+  daniela: { id: 'daniela', name: 'Daniela Giraldo', uni: 'uam', program: b('Fisioterapia', 'Physical Therapy'), color: '#E11D48' },
+  tomas: { id: 'tomas', name: 'Tomás Villegas', uni: 'uam', program: b('Ingeniería Biomédica', 'Biomedical Engineering'), color: '#5B3FA0' },
+  laura: { id: 'laura', name: 'Laura Montoya', uni: 'uam', program: b('Lenguas Modernas', 'Modern Languages'), color: '#CA8A04' },
+  felipe: { id: 'felipe', name: 'Felipe Zuluaga', uni: 'uam', program: b('Comunicación Social', 'Communications'), color: '#0D9488' },
+  isabella: { id: 'isabella', name: 'Isabella Cardona', uni: 'ucaldas', program: b('Artes Plásticas', 'Fine Arts'), color: '#C2368C' },
+  mateo: { id: 'mateo', name: 'Mateo Ríos', uni: 'unal', program: b('Ingeniería Civil', 'Civil Engineering'), color: '#1F8A5B' },
+  // ----- real organizers (shown only as event organizers, never as chat contacts) -----
+  org_uam: { id: 'org_uam', name: 'Universidad Autónoma de Manizales', institution: true, uni: 'uam', program: b('Organizador oficial', 'Official organizer'), color: '#B8306F' },
+  org_unal: { id: 'org_unal', name: 'Universidad Nacional · Sede Manizales', institution: true, uni: 'unal', program: b('Organizador oficial', 'Official organizer'), color: '#2F7D6D' },
+  org_ucaldas: { id: 'org_ucaldas', name: 'Universidad de Caldas', institution: true, uni: 'ucaldas', program: b('Organizador oficial', 'Official organizer'), color: '#0E7C86' },
+  org_fit: { id: 'org_fit', name: 'Festival Internacional de Teatro de Manizales', institution: true, uni: 'city', program: b('Organizador oficial', 'Official organizer'), color: '#9A6200' },
+  org_ungrd: { id: 'org_ungrd', name: 'UNGRD · Gestión del Riesgo de Desastres', institution: true, uni: 'city', program: b('Entidad nacional', 'National agency'), color: '#D4461F' },
+  org_feria: { id: 'org_feria', name: 'Feria de Manizales', institution: true, uni: 'city', program: b('Evento de ciudad', 'City event'), color: '#9A6200' },
 };
 
 export const PRODUCT_CATEGORIES = ['Tecnología', 'Libros y estudio', 'Ropa y accesorios', 'Hogar', 'Deportes', 'Comida', 'Otros'];
 export const SERVICE_CATEGORIES = ['Tutorías', 'Diseño', 'Fotografía y video', 'Tecnología', 'Comida', 'Repostería', 'Artesanías', 'Otros'];
-export const EVENT_CATEGORIES = ['Académicos', 'Culturales', 'Sociales', 'Deportes', 'Emprendimiento'];
+export const EVENT_CATEGORIES = ['Académicos', 'Culturales', 'Comunidad', 'Deportes', 'Emprendimiento'];
 export const CONDITIONS = ['new', 'likeNew', 'goodUsed', 'wornUsed'];
 export const CONTACT_OPTIONS = ['market', 'campus', 'virtual'];
 
+// ======================= PRODUCTS (fictional) =======================
 export const initialProducts = [
   {
     id: 'p1',
@@ -49,11 +74,11 @@ export const initialProducts = [
     sellerId: 'santiago',
     image: img('photo-1496181133206-80ce9b88a853'),
     description: b(
-      'Intel Core i5 de octava generación, 16 GB de RAM y SSD de 512 GB. Batería dura unas 5 horas. Ideal para programar, hacer trabajos y clases virtuales. Incluye cargador original.',
-      '8th-gen Intel Core i5, 16 GB RAM and 512 GB SSD. Battery lasts about 5 hours. Great for coding, assignments and online classes. Original charger included.'
+      'Intel Core i5 de octava generación, 16 GB de RAM y SSD de 512 GB. Batería de unas 5 horas. Corre bien MATLAB, Visual Studio Code y Packet Tracer. Incluye cargador original; se puede probar en la sala de cómputo.',
+      '8th-gen Intel Core i5, 16 GB RAM, 512 GB SSD. About 5 hours of battery. Runs MATLAB, VS Code and Packet Tracer fine. Original charger included; you can try it in the computer lab.'
     ),
-    location: CAMPUS,
-    createdAt: minutesAgo(95),
+    location: UAM_PICKUP,
+    createdAt: at('2026-10-18', '11:40'),
   },
   {
     id: 'p2',
@@ -64,11 +89,11 @@ export const initialProducts = [
     sellerId: 'tomas',
     image: null,
     description: b(
-      'La usé solo un semestre para Cálculo Diferencial. Funciona perfecto, con estuche y manual. Permitida en la mayoría de parciales.',
-      'I only used it for one semester of Differential Calculus. Works perfectly, comes with case and manual. Allowed in most exams.'
+      'La usé un semestre para Cálculo Diferencial. Funciona perfecto, con estuche y manual. Es la que piden en la mayoría de parciales de primeros semestres.',
+      'Used for one semester of Differential Calculus. Works perfectly, with case and manual. The one most first-year exams ask for.'
     ),
-    location: b('Biblioteca o cafetería', 'Library or cafeteria'),
-    createdAt: minutesAgo(240),
+    location: b('Biblioteca de la UAM', 'UAM library'),
+    createdAt: at('2026-10-20', '09:15'),
   },
   {
     id: 'p3',
@@ -79,11 +104,26 @@ export const initialProducts = [
     sellerId: 'andres',
     image: img('photo-1512820790803-83ca734da794'),
     description: b(
-      'Paquete de dos libros: Cálculo de una variable de Stewart y Física para ciencias e ingeniería de Serway. Tienen algunos subrayados a lápiz.',
+      'Paquete de dos libros: Cálculo de una variable de Stewart y Física para ciencias e ingeniería de Serway. Algunos subrayados a lápiz.',
       "Bundle of two books: Stewart's Single Variable Calculus and Serway's Physics for Scientists and Engineers. Some pencil highlighting."
     ),
-    location: CAMPUS,
-    createdAt: minutesAgo(60 * 8),
+    location: UAM_PICKUP,
+    createdAt: at('2026-10-15', '17:30'),
+  },
+  {
+    id: 'p13',
+    title: b('Kit de dibujo técnico + escalímetro', 'Technical drawing kit + scale ruler'),
+    price: 70000,
+    category: 'Libros y estudio',
+    condition: 'goodUsed',
+    sellerId: 'mateo',
+    image: img('photo-1503387762-592deb58ef4e'),
+    description: b(
+      'Escuadras, compás, portaminas 0.5 y escalímetro triangular. Me sirvió para Expresión Gráfica en la Nacional; ideal para Arquitectura o Ingeniería Civil.',
+      'Set squares, compass, 0.5 mechanical pencil and triangular scale. Used for Graphic Expression at the Nacional; great for Architecture or Civil Engineering.'
+    ),
+    location: b('Campus Palogrande (U. Nacional)', 'Palogrande campus (U. Nacional)'),
+    createdAt: at('2026-10-13', '14:05'),
   },
   {
     id: 'p4',
@@ -94,11 +134,11 @@ export const initialProducts = [
     sellerId: 'julian',
     image: img('photo-1505740420928-5e560c06d30e'),
     description: b(
-      'Bluetooth, hasta 50 horas de batería. Perfectos para estudiar en la biblioteca. Los vendo porque me regalaron otros.',
-      'Bluetooth, up to 50 hours of battery. Perfect for studying in the library. Selling them because I got another pair as a gift.'
+      'Bluetooth, hasta 50 horas de batería. Perfectos para estudiar o para el bus. Los vendo porque me regalaron otros.',
+      'Bluetooth, up to 50 hours of battery. Great for studying or the bus. Selling them because I got another pair as a gift.'
     ),
-    location: b('Bloque de ingenierías', 'Engineering building'),
-    createdAt: minutesAgo(60 * 20),
+    location: UAM_PICKUP,
+    createdAt: at('2026-10-11', '19:20'),
   },
   {
     id: 'p5',
@@ -109,11 +149,11 @@ export const initialProducts = [
     sellerId: 'camila',
     image: img('photo-1553062407-98eeb64c6a62'),
     description: b(
-      'Compartimento acolchado para portátil de hasta 15.6", puerto USB externo y cierre oculto. Resistente a la lluvia, ideal para el clima de Manizales.',
-      'Padded compartment for laptops up to 15.6", external USB port and hidden zipper. Rain-resistant, perfect for Manizales weather.'
+      'Compartimento acolchado para portátil de hasta 15.6", puerto USB y cierre oculto. Resistente a la lluvia: probado con los aguaceros de Manizales.',
+      'Padded compartment for laptops up to 15.6", USB port and hidden zipper. Rain-resistant: tested in Manizales downpours.'
     ),
-    location: CAMPUS,
-    createdAt: minutesAgo(60 * 26),
+    location: b('Estación Fundadores del Cable Aéreo', 'Fundadores cable car station'),
+    createdAt: at('2026-10-09', '10:10'),
   },
   {
     id: 'p6',
@@ -124,11 +164,26 @@ export const initialProducts = [
     sellerId: 'valentina',
     image: img('photo-1515562141207-7a88fb7ce338'),
     description: b(
-      'Accesorios hechos a mano con mostacilla y piedras naturales. Hay diseños personalizados con tus colores favoritos. Precio por unidad.',
-      'Handmade accessories with beads and natural stones. Custom designs in your favorite colors available. Price per item.'
+      'Hechos a mano con mostacilla y piedras naturales. Hago diseños personalizados con tus colores. Precio por unidad.',
+      'Handmade with beads and natural stones. Custom designs in your colors. Price per item.'
     ),
-    location: CAMPUS,
-    createdAt: minutesAgo(60 * 30),
+    location: UAM_PICKUP,
+    createdAt: at('2026-10-06', '16:45'),
+  },
+  {
+    id: 'p14',
+    title: b('Lienzos y acrílicos (poco uso)', 'Canvases and acrylic paints (barely used)'),
+    price: 55000,
+    category: 'Otros',
+    condition: 'likeNew',
+    sellerId: 'isabella',
+    image: img('photo-1513364776144-60967b0f800f'),
+    description: b(
+      'Tres lienzos de 30×40 y un set de 12 acrílicos. Sobraron de un taller de Artes Plásticas en la U. de Caldas.',
+      'Three 30×40 canvases and a 12-color acrylic set. Leftovers from a Fine Arts workshop at U. de Caldas.'
+    ),
+    location: b('Universidad de Caldas, sede central', 'Universidad de Caldas, main campus'),
+    createdAt: at('2026-10-17', '12:30'),
   },
   {
     id: 'p7',
@@ -139,11 +194,11 @@ export const initialProducts = [
     sellerId: 'felipe',
     image: img('photo-1485965120184-e220f721d03e'),
     description: b(
-      'Bicicleta de 21 cambios con frenos en buen estado. Llantas nuevas. Incluye candado y luz trasera.',
-      '21-speed bike with brakes in good shape. New tires. Lock and rear light included.'
+      '21 cambios y frenos en buen estado (las lomas de Manizales lo exigen). Llantas nuevas, incluye candado y luz trasera.',
+      '21 speeds and good brakes (Manizales hills demand it). New tires, lock and rear light included.'
     ),
     location: b('Barrio Palermo', 'Palermo neighborhood'),
-    createdAt: minutesAgo(60 * 48),
+    createdAt: at('2026-09-29', '08:50'),
   },
   {
     id: 'p8',
@@ -153,42 +208,9 @@ export const initialProducts = [
     condition: 'likeNew',
     sellerId: 'laura',
     image: img('photo-1507473885765-e6ed057f782c'),
-    description: b(
-      'Tres niveles de intensidad y luz cálida o fría. Cuello flexible. Perfecta para estudiar de noche.',
-      'Three brightness levels and warm or cool light. Flexible neck. Perfect for late-night studying.'
-    ),
-    location: CAMPUS,
-    createdAt: minutesAgo(60 * 52),
-  },
-  {
-    id: 'p9',
-    title: b('Tenis deportivos talla 40', 'Running shoes, size 40'),
-    price: 120000,
-    category: 'Ropa y accesorios',
-    condition: 'goodUsed',
-    sellerId: 'daniela',
-    image: img('photo-1542291026-7eec264c27ff'),
-    description: b(
-      'Usados pocas veces, muy cómodos para correr o ir al gimnasio. Talla 40 colombiana.',
-      'Only worn a few times, very comfortable for running or the gym. Colombian size 40.'
-    ),
-    location: CAMPUS,
-    createdAt: minutesAgo(60 * 70),
-  },
-  {
-    id: 'p10',
-    title: b('Monitor de 24 pulgadas Full HD', '24-inch Full HD monitor'),
-    price: 380000,
-    category: 'Tecnología',
-    condition: 'goodUsed',
-    sellerId: 'santiago',
-    image: img('photo-1527443224154-c4a3942d3acf'),
-    description: b(
-      'Monitor IPS de 24", entrada HDMI. Muy buen estado, sin píxeles muertos. Incluye cable HDMI.',
-      '24" IPS monitor with HDMI input. Very good condition, no dead pixels. HDMI cable included.'
-    ),
-    location: b('Barrio La Enea', 'La Enea neighborhood'),
-    createdAt: minutesAgo(60 * 90),
+    description: b('Tres intensidades, luz cálida o fría y cuello flexible. Perfecta para estudiar de noche.', 'Three brightness levels, warm or cool light and flexible neck. Perfect for late-night studying.'),
+    location: b('Barrio Milán', 'Milán neighborhood'),
+    createdAt: at('2026-09-26', '20:05'),
   },
   {
     id: 'p11',
@@ -198,12 +220,9 @@ export const initialProducts = [
     condition: null,
     sellerId: 'mariana',
     image: img('photo-1606313564200-e75d5e30476c'),
-    description: b(
-      'Brownies de chocolate con nueces, hechos el mismo día. Pedidos con un día de anticipación.',
-      'Chocolate walnut brownies, baked the same day. Order one day in advance.'
-    ),
-    location: b('Entrega en la cafetería', 'Cafeteria pickup'),
-    createdAt: minutesAgo(60 * 3),
+    description: b('Brownies de chocolate con nueces, hechos el mismo día. Pedidos con un día de anticipación.', 'Chocolate walnut brownies, baked the same day. Order one day in advance.'),
+    location: UAM_PICKUP,
+    createdAt: at('2026-10-21', '06:55'),
   },
   {
     id: 'p12',
@@ -213,15 +232,13 @@ export const initialProducts = [
     condition: 'goodUsed',
     sellerId: 'tomas',
     image: null,
-    description: b(
-      'Bata blanca manga larga, antifluidos. Usada para laboratorios de química y biología.',
-      'White long-sleeve, fluid-resistant coat. Used for chemistry and biology labs.'
-    ),
-    location: CAMPUS,
-    createdAt: minutesAgo(60 * 100),
+    description: b('Bata blanca manga larga, antifluidos. La usé en los laboratorios de Biomédica.', 'White long-sleeve, fluid-resistant lab coat. Used in the Biomedical labs.'),
+    location: UAM_PICKUP,
+    createdAt: at('2026-09-18', '15:20'),
   },
 ];
 
+// ======================= SERVICES & BUSINESSES (fictional) =======================
 export const initialServices = [
   {
     id: 's1',
@@ -232,8 +249,8 @@ export const initialServices = [
     priceLabel: b('Desde $ 25.000 / hora', 'From $ 25.000 / hour'),
     image: img('photo-1509228468518-180dd4864904'),
     description: b(
-      'Te ayudo a preparar parciales de Cálculo Diferencial, Integral y Álgebra Lineal. Sesiones presenciales en la biblioteca o virtuales. Grupos de hasta 4 personas.',
-      'I help you prepare for Differential and Integral Calculus and Linear Algebra exams. In-person sessions at the library or online. Groups of up to 4 people.'
+      'Preparo parciales de Cálculo Diferencial, Integral y Álgebra Lineal. Presencial en la biblioteca de la UAM o virtual. Grupos de hasta 4 personas.',
+      'Exam prep for Differential and Integral Calculus and Linear Algebra. In person at the UAM library or online. Groups of up to 4.'
     ),
     contact: 'market',
     rating: 4.9,
@@ -241,14 +258,14 @@ export const initialServices = [
   {
     id: 's2',
     kind: 'servicio',
-    name: b('Clases de inglés conversacional', 'Conversational English classes'),
+    name: b('Inglés conversacional y prueba de suficiencia', 'Conversational English and proficiency test prep'),
     category: 'Tutorías',
     providerId: 'laura',
     priceLabel: b('Desde $ 30.000 / hora', 'From $ 30.000 / hour'),
     image: img('photo-1503676260728-1c00da094a0b'),
     description: b(
-      'Practica speaking con actividades dinámicas. Preparación para exámenes de suficiencia y entrevistas. Niveles A2 a B2.',
-      'Practice speaking with fun activities. Preparation for proficiency exams and interviews. Levels A2 to B2.'
+      'Practica speaking y prepara la prueba de suficiencia en inglés que te piden para graduarte. Niveles A2 a B2, simulacros de examen incluidos.',
+      'Practice speaking and prepare the English proficiency test required to graduate. Levels A2 to B2, mock exams included.'
     ),
     contact: 'market',
     rating: 4.8,
@@ -262,8 +279,8 @@ export const initialServices = [
     priceLabel: b('Desde $ 80.000', 'From $ 80.000'),
     image: img('photo-1561070791-2526d30994b5'),
     description: b(
-      'Diseño de logo, paleta de colores y piezas para redes sociales para emprendimientos estudiantiles. Entrega en 5 días hábiles.',
-      'Logo, color palette and social media graphics for student businesses. Delivered in 5 business days.'
+      'Logo, paleta y piezas para redes para emprendimientos estudiantiles. Ideal si vas a participar en una feria empresarial. Entrega en 5 días hábiles.',
+      'Logo, palette and social media graphics for student businesses. Perfect before a business fair. Delivered in 5 business days.'
     ),
     contact: 'market',
     rating: 5.0,
@@ -271,14 +288,14 @@ export const initialServices = [
   {
     id: 's4',
     kind: 'servicio',
-    name: b('Fotografía de grados y eventos', 'Graduation and event photography'),
+    name: b('Fotografía de grados en Chipre y el Recinto del Pensamiento', 'Graduation photos at Chipre and Recinto del Pensamiento'),
     category: 'Fotografía y video',
     providerId: 'felipe',
     priceLabel: b('Desde $ 120.000', 'From $ 120.000'),
-    image: img('photo-1516035069371-29a1b244cc32'),
+    image: photo('zeri'),
     description: b(
-      'Sesiones de fotos para grados, perfiles profesionales y eventos estudiantiles. Incluye edición básica y entrega digital.',
-      'Photo sessions for graduations, professional headshots and student events. Basic editing and digital delivery included.'
+      'Sesiones para grados y perfiles profesionales en los lugares más lindos de Manizales: el mirador de Chipre, el Recinto del Pensamiento o tu campus. Edición básica y entrega digital.',
+      "Graduation and professional headshot sessions at Manizales' prettiest spots: Chipre viewpoint, Recinto del Pensamiento or your campus. Basic editing and digital delivery."
     ),
     contact: 'campus',
     rating: 4.7,
@@ -291,10 +308,7 @@ export const initialServices = [
     providerId: 'julian',
     priceLabel: b('Desde $ 60.000', 'From $ 60.000'),
     image: img('photo-1574717024653-61fd2cf4d44d'),
-    description: b(
-      'Reels, TikToks y videos para proyectos de clase. Subtítulos, música y transiciones. Entregas rápidas.',
-      'Reels, TikToks and videos for class projects. Subtitles, music and transitions. Fast turnaround.'
-    ),
+    description: b('Reels, TikToks y videos para proyectos de clase. Subtítulos, música y transiciones.', 'Reels, TikToks and class project videos. Subtitles, music and transitions.'),
     contact: 'virtual',
     rating: 4.6,
   },
@@ -306,12 +320,24 @@ export const initialServices = [
     providerId: 'santiago',
     priceLabel: b('Desde $ 40.000', 'From $ 40.000'),
     image: null,
-    description: b(
-      'Formateo, limpieza interna, cambio de pasta térmica, instalación de programas y ampliación de RAM o SSD.',
-      'OS reinstall, internal cleaning, thermal paste replacement, software installation and RAM or SSD upgrades.'
-    ),
+    description: b('Formateo, limpieza interna, pasta térmica, instalación de programas y ampliación de RAM o SSD.', 'OS reinstall, internal cleaning, thermal paste, software setup and RAM or SSD upgrades.'),
     contact: 'campus',
     rating: 4.8,
+  },
+  {
+    id: 's11',
+    kind: 'servicio',
+    name: b('Maquetas de arquitectura y modelado 3D', 'Architecture models and 3D modeling'),
+    category: 'Diseño',
+    providerId: 'mateo',
+    priceLabel: b('Desde $ 90.000', 'From $ 90.000'),
+    image: photo('unalArq'),
+    description: b(
+      'Maquetas en cartón paja y balso, y modelado en SketchUp o Revit para entregas de taller. Estudiante de la U. Nacional sede Manizales.',
+      'Cardboard and balsa models plus SketchUp or Revit modeling for studio deliveries. Student at U. Nacional, Manizales campus.'
+    ),
+    contact: 'market',
+    rating: 4.9,
   },
   {
     id: 's7',
@@ -322,8 +348,8 @@ export const initialServices = [
     priceLabel: b('$ 14.000 por almuerzo', '$ 14.000 per lunch'),
     image: img('photo-1504674900247-0877df9cc836'),
     description: b(
-      'Almuerzos caseros de lunes a viernes: sopa, seco y jugo natural. Pedidos antes de las 10:00 a. m. con entrega en el campus.',
-      'Home-cooked lunches Monday to Friday: soup, main dish and fresh juice. Order before 10:00 AM for campus delivery.'
+      'Almuerzos caseros de lunes a viernes: sopa, seco y jugo natural. Pedidos antes de las 10:00 a. m. con entrega en la portería de la UAM.',
+      'Home-cooked lunches Monday to Friday: soup, main dish and fresh juice. Order before 10:00 AM for delivery at the UAM gate.'
     ),
     contact: 'market',
     rating: 4.9,
@@ -336,10 +362,7 @@ export const initialServices = [
     providerId: 'mariana',
     priceLabel: b('Desde $ 6.000', 'From $ 6.000'),
     image: img('photo-1578985545062-69928b1d9587'),
-    description: b(
-      'Tortas, cupcakes, brownies y postres personalizados para cumpleaños y celebraciones. Pedidos con anticipación.',
-      'Cakes, cupcakes, brownies and custom desserts for birthdays and celebrations. Order in advance.'
-    ),
+    description: b('Tortas, cupcakes, brownies y postres personalizados para cumpleaños y celebraciones.', 'Cakes, cupcakes, brownies and custom desserts for birthdays and celebrations.'),
     contact: 'market',
     rating: 5.0,
   },
@@ -351,282 +374,559 @@ export const initialServices = [
     providerId: 'camila',
     priceLabel: b('Desde $ 15.000', 'From $ 15.000'),
     image: img('photo-1452860606245-08befc0ff44b'),
-    description: b(
-      'Macetas de cerámica, llaveros tejidos y regalos hechos a mano. Cada pieza es única.',
-      'Ceramic planters, knitted keychains and handmade gifts. Every piece is unique.'
-    ),
+    description: b('Macetas de cerámica, llaveros tejidos y regalos hechos a mano. Cada pieza es única.', 'Ceramic planters, knitted keychains and handmade gifts. Every piece is unique.'),
     contact: 'market',
     rating: 4.8,
   },
   {
     id: 's10',
     kind: 'emprendimiento',
-    name: b('Café Ladera — Café de origen', 'Café Ladera — Single-origin coffee'),
+    name: b('Café Ladera — Café de origen Caldas', 'Café Ladera — Single-origin Caldas coffee'),
     category: 'Comida',
     providerId: 'tomas',
     priceLabel: b('Desde $ 22.000', 'From $ 22.000'),
     image: img('photo-1509042239860-f550ce710b93'),
-    description: b(
-      'Café especial cultivado por mi familia en Caldas. Bolsas de 250 g y 500 g, en grano o molido.',
-      'Specialty coffee grown by my family in Caldas. 250 g and 500 g bags, whole bean or ground.'
-    ),
+    description: b('Café especial cultivado por mi familia en Chinchiná. Bolsas de 250 g y 500 g, en grano o molido.', 'Specialty coffee grown by my family in Chinchiná. 250 g and 500 g bags, whole bean or ground.'),
     contact: 'campus',
     rating: 4.9,
   },
+  {
+    id: 's12',
+    kind: 'emprendimiento',
+    name: b('Trazo Vivo — Ilustración y retratos', 'Trazo Vivo — Illustration and portraits'),
+    category: 'Artesanías',
+    providerId: 'isabella',
+    priceLabel: b('Desde $ 35.000', 'From $ 35.000'),
+    image: img('photo-1513364776144-60967b0f800f'),
+    description: b(
+      'Retratos en acuarela, ilustraciones para regalos y stickers personalizados. Estudiante de Artes Plásticas de la U. de Caldas.',
+      'Watercolor portraits, gift illustrations and custom stickers. Fine Arts student at U. de Caldas.'
+    ),
+    contact: 'market',
+    rating: 5.0,
+  },
 ];
 
+// ======================= EVENTS =======================
+// `source`: real event, data from the linked public source.
+// `demo`: illustrative student event.  `tentative`: real event, dates not official yet.
 export const initialEvents = [
   {
-    id: 'e1',
-    name: b('UAM Fest', 'UAM Fest'),
-    category: 'Culturales',
-    date: '2026-11-14',
-    time: '14:00',
-    location: b('Campus universitario (ubicación ilustrativa)', 'University campus (illustrative location)'),
-    organizerId: 'clubs',
-    image: img('photo-1470229722913-7c0e2dbbafd3', 1200),
-    description: b(
-      'Una tarde de música en vivo, comida de emprendimientos estudiantiles, juegos y actividades culturales para toda la comunidad. Evento de ejemplo para mostrar cómo se publicarían los eventos en Market U.',
-      'An afternoon of live music, food from student businesses, games and cultural activities for the whole community. A sample event showing how events would be posted on Market U.'
-    ),
-    interested: 214,
-    demo: true,
-    featured: true,
-  },
-  {
-    id: 'e2',
-    name: b('Feria de Emprendimiento Estudiantil', 'Student Entrepreneurship Fair'),
-    category: 'Emprendimiento',
-    date: '2026-11-06',
-    time: '09:00',
-    location: b('Plazoleta central (ilustrativa)', 'Central plaza (illustrative)'),
-    organizerId: 'mariana',
-    image: img('photo-1533900298318-6b8da08a523e', 1200),
-    description: b(
-      'Más de 30 emprendimientos estudiantiles muestran sus productos y servicios. Habrá charlas cortas sobre cómo validar una idea de negocio.',
-      'More than 30 student businesses showcase their products and services. Includes short talks on how to validate a business idea.'
-    ),
-    interested: 132,
-    demo: true,
-  },
-  {
-    id: 'e3',
-    name: b('Congreso de Innovación y Tecnología', 'Innovation & Technology Conference'),
+    id: 'e-foro',
+    name: b('XXIX Foro de Investigación UAM: Tejiendo conocimiento para construir redes', 'XXIX UAM Research Forum: Weaving knowledge to build networks'),
     category: 'Académicos',
+    institution: 'uam',
+    date: '2026-11-11',
+    endDate: '2026-11-13',
+    time: '07:00',
+    location: b('Universidad Autónoma de Manizales · modalidad híbrida', 'Universidad Autónoma de Manizales · hybrid (in person + online)'),
+    organizerId: 'org_uam',
+    image: photo('uamFacade'),
+    description: b(
+      'El XXIX Foro de Investigación UAM llega junto con el I Encuentro Interdisciplinario de I+D+i de la Red Universitaria Mutis y el II Coloquio Doctoral de Ingeniería y Sostenibilidad. Cinco líneas temáticas: bioeconomía y economía creativa; agua y cambio climático; nuevo modelo productivo, sostenible y competitivo; conocimiento e innovación para la equidad; y educar con calidad. La participación es sin costo, como gesto de solidaridad con la comunidad tras el desastre natural.',
+      'The XXIX UAM Research Forum comes with the 1st Interdisciplinary R&D&I Meeting of the Mutis University Network and the 2nd Doctoral Colloquium on Engineering and Sustainability. Five tracks: bioeconomy and creative economy; water and climate change; a new productive, sustainable and competitive model; knowledge and innovation for equity; and quality education. Participation is free, as a gesture of solidarity with the community after the natural disaster.'
+    ),
+    interested: 186,
+    featured: true,
+    source: { label: 'autonoma.edu.co', url: 'https://www.autonoma.edu.co/eventos/tejiendo-conocimientos-para-construir-redes' },
+  },
+  {
+    id: 'e-hack',
+    name: b('Hackathon UNAL Manizales: soluciones tras el sismo', 'UNAL Manizales Hackathon: solutions after the earthquake'),
+    category: 'Emprendimiento',
+    institution: 'unal',
     date: '2026-11-20',
-    time: '08:00',
-    location: b('Auditorio principal (ilustrativo)', 'Main auditorium (illustrative)'),
-    organizerId: 'santiago',
+    endDate: '2026-11-21',
+    time: '',
+    location: b('Universidad Nacional de Colombia, sede Manizales', 'Universidad Nacional de Colombia, Manizales campus'),
+    organizerId: 'org_unal',
+    image: photo('unalPalogrande'),
+    description: b(
+      'Maratón de innovación abierta a estudiantes de varias universidades para crear prototipos en vivienda e infraestructura, servicios públicos, movilidad y gestión del riesgo después del terremoto del 10 de agosto. Se pide un prototipo medible y una ruta para probarlo en un piloto de 20 a 30 días. Se presentó el 8 de octubre en el campus La Nubia.',
+      'Innovation marathon open to students from several universities to build prototypes for housing and infrastructure, public services, mobility and risk management after the August 10 earthquake. Teams must deliver a measurable prototype and a plan to pilot it in 20 to 30 days. It was launched on October 8 at the La Nubia campus.'
+    ),
+    interested: 241,
+    source: { label: 'BC Noticias', url: 'https://www.bcnoticias.com.co/unal-manizales-realizara-hackathon-para-buscar-soluciones-tras-el-sismo-en-caldas/' },
+  },
+  {
+    id: 'e-sim',
+    name: b('Simulacro Nacional de Respuesta a Emergencias 2026', '2026 National Emergency Response Drill'),
+    category: 'Comunidad',
+    institution: 'city',
+    date: '2026-10-21',
+    time: '10:00',
+    location: b('Todo el país: universidades, empresas, colegios y hogares', 'Nationwide: universities, companies, schools and homes'),
+    organizerId: 'org_ungrd',
+    image: photo('cerroOro'),
+    description: b(
+      'Dos momentos: a las 10:00 a. m. para entidades públicas y privadas, organizaciones, familias y ciudadanía, y a las 2:00 p. m. para alcaldías y gobernaciones. Este año se trasladó de septiembre a octubre por el terremoto del 10 de agosto. Ubica la ruta de evacuación de tu bloque y tu punto de encuentro.',
+      'Two moments: 10:00 AM for public and private organizations, families and citizens, and 2:00 PM for city and regional governments. This year it moved from September to October because of the August 10 earthquake. Find your building’s evacuation route and meeting point.'
+    ),
+    interested: 512,
+    source: { label: 'Blu Radio · Circular UNGRD 079', url: 'https://www.bluradio.com/nacion/simulacro-nacional-sera-el-proximo-21-de-octubre-se-realizara-en-dos-jornadas-rg10' },
+  },
+  {
+    id: 'e-salud',
+    name: b('"Pare Parcero": Semana de la Salud 2026', '"Pare Parcero": 2026 Health Week'),
+    category: 'Comunidad',
+    institution: 'ucaldas',
+    date: '2026-10-19',
+    endDate: '2026-10-21',
+    time: '',
+    location: b('Universidad de Caldas', 'Universidad de Caldas'),
+    organizerId: 'org_ucaldas',
+    image: photo('ucaldas'),
+    description: b(
+      'Semana de bienestar y salud de la Universidad de Caldas, con actividades para estudiantes, docentes y personal. Consulta la programación en el portal de la universidad.',
+      'Universidad de Caldas wellbeing and health week, with activities for students, faculty and staff. Check the schedule on the university portal.'
+    ),
+    interested: 97,
+    source: { label: 'ucaldas.edu.co', url: 'https://ucaldas.edu.co/portal/' },
+  },
+  {
+    id: 'e-humanismo',
+    name: b('Simposio Humanismo y Salud', 'Humanism and Health Symposium'),
+    category: 'Académicos',
+    institution: 'ucaldas',
+    date: '2026-10-23',
+    time: '',
+    location: b('Universidad de Caldas', 'Universidad de Caldas'),
+    organizerId: 'org_ucaldas',
     image: img('photo-1540575467063-178a50c2df87', 1200),
     description: b(
-      'Conferencias sobre inteligencia artificial, salud digital y desarrollo sostenible, con espacios para presentar proyectos de investigación estudiantil.',
-      'Talks on artificial intelligence, digital health and sustainable development, with space to present student research projects.'
+      'Simposio académico de la Universidad de Caldas sobre la dimensión humana del cuidado de la salud. Detalles y agenda en el portal de la universidad.',
+      'Universidad de Caldas academic symposium on the human side of healthcare. Details and agenda on the university portal.'
     ),
-    interested: 98,
-    demo: true,
+    interested: 54,
+    source: { label: 'ucaldas.edu.co', url: 'https://ucaldas.edu.co/portal/' },
   },
   {
-    id: 'e4',
-    name: b('Noche Acústica: Open Mic', 'Acoustic Night: Open Mic'),
+    id: 'e-openmic',
+    name: b('Noche acústica a beneficio de familias damnificadas', 'Acoustic night for families affected by the earthquake'),
     category: 'Culturales',
+    institution: 'students',
     date: '2026-10-30',
     time: '18:00',
-    location: b('Cafetería central (ilustrativa)', 'Main cafeteria (illustrative)'),
+    location: b('Cafetería de la UAM (ilustrativo)', 'UAM cafeteria (illustrative)'),
     organizerId: 'felipe',
     image: img('photo-1501281668745-f7f57925c3b4', 1200),
     description: b(
-      'Trae tu guitarra, tu poesía o tu voz. Micrófono abierto para músicos y artistas de la comunidad universitaria.',
-      'Bring your guitar, your poetry or your voice. Open mic for musicians and artists from the university community.'
+      'Micrófono abierto para músicos, poetas y artistas de las universidades de Manizales. La entrada es un mercado no perecedero para familias afectadas por el sismo.',
+      'Open mic for musicians, poets and artists from Manizales universities. Entry is a non-perishable food donation for families affected by the earthquake.'
     ),
     interested: 76,
     demo: true,
   },
   {
-    id: 'e5',
-    name: b('Torneo Interfacultades de Fútbol Sala', 'Inter-faculty Futsal Tournament'),
+    id: 'e-torneo',
+    name: b('Torneo interuniversitario de fútbol sala', 'Inter-university futsal tournament'),
     category: 'Deportes',
-    date: '2026-11-02',
+    institution: 'students',
+    date: '2026-11-03',
     time: '16:00',
     location: b('Coliseo (ilustrativo)', 'Sports arena (illustrative)'),
     organizerId: 'julian',
     image: img('photo-1574629810360-7efbbe195018', 1200),
     description: b(
-      'Inscribe a tu equipo de 8 jugadores y representa a tu programa. Fase de grupos y finales con barras de cada facultad.',
-      'Sign up your team of 8 players and represent your program. Group stage and finals, with cheering sections from every faculty.'
+      'Equipos de 8 jugadores de la UAM, la Nacional y la de Caldas. Fase de grupos y finales con barras de cada universidad.',
+      'Teams of 8 players from UAM, the Nacional and U. de Caldas. Group stage and finals with cheering sections from each university.'
     ),
     interested: 154,
     demo: true,
   },
   {
-    id: 'e6',
-    name: b('Encuentro de Clubes Estudiantiles', 'Student Clubs Fair'),
-    category: 'Sociales',
-    date: '2026-10-28',
-    time: '11:00',
-    location: b('Bloque de bienestar (ilustrativo)', 'Student wellness building (illustrative)'),
-    organizerId: 'clubs',
-    image: img('photo-1522202176988-66273c2fd55f', 1200),
+    id: 'e-feria',
+    name: b('70ª Feria de Manizales', '70th Manizales Fair'),
+    category: 'Culturales',
+    institution: 'city',
+    date: '2027-01-02',
+    endDate: '2027-01-10',
+    time: '',
+    tentative: true,
+    location: b('Manizales', 'Manizales'),
+    organizerId: 'org_feria',
+    image: photo('catedral'),
     description: b(
-      'Conoce los clubes de lectura, robótica, debate, fotografía y voluntariado. Ideal para estudiantes de primeros semestres.',
-      'Meet the reading, robotics, debate, photography and volunteering clubs. Perfect for first-year students.'
+      'La feria más tradicional de la ciudad se celebra cada año en los primeros días de enero, con desfiles, conciertos y el Reinado Internacional del Café. Las fechas oficiales de 2027 aún no se han anunciado.',
+      "The city's most traditional fair takes place every year in early January, with parades, concerts and the International Coffee Pageant. Official 2027 dates have not been announced yet."
     ),
-    interested: 63,
-    demo: true,
+    interested: 388,
+    source: { label: 'Calendario de ferias (Fontur)', url: 'https://calendarioferiasyfiestas.fontur.com.co/en/node/1445' },
+  },
+  // ----- past events -----
+  {
+    id: 'e-ling',
+    name: b('I Congreso Internacional de Lingüística y Literatura', '1st International Congress of Linguistics and Literature'),
+    category: 'Académicos',
+    institution: 'ucaldas',
+    date: '2026-10-07',
+    endDate: '2026-10-09',
+    time: '',
+    location: b('Universidad de Caldas', 'Universidad de Caldas'),
+    organizerId: 'org_ucaldas',
+    image: photo('ucaldas'),
+    description: b(
+      'Primer congreso internacional de lingüística y literatura organizado por la Universidad de Caldas, con ponencias de investigadores y estudiantes.',
+      'First international linguistics and literature congress organized by Universidad de Caldas, with talks by researchers and students.'
+    ),
+    recap: b(
+      'Tres días de ponencias sobre lengua, literatura y enseñanza. Para los de Lenguas Modernas, una buena excusa para cruzar la ciudad y conocer otros grupos de investigación.',
+      'Three days of talks on language, literature and teaching. For Modern Languages students, a great excuse to cross town and meet other research groups.'
+    ),
+    interested: 88,
+    source: { label: 'ucaldas.edu.co', url: 'https://ucaldas.edu.co/portal/' },
+  },
+  {
+    id: 'e-fit',
+    name: b('58° Festival Internacional de Teatro de Manizales', '58th Manizales International Theater Festival'),
+    category: 'Culturales',
+    institution: 'city',
+    date: '2026-09-26',
+    endDate: '2026-10-04',
+    time: '',
+    location: b('Auditorio del Bloque K (U. Nacional), Teatro El Galpón y calles de Manizales', 'Block K Auditorium (U. Nacional), Teatro El Galpón and the streets of Manizales'),
+    organizerId: 'org_fit',
+    image: img('photo-1503095396549-807759245b35', 1200),
+    description: b(
+      'Unas 30 agrupaciones de España, Uruguay, Chile, Portugal, México, Brasil, República Dominicana, Argentina y Colombia, con teatro de sala, de calle, infantil y títeres. Abrió con la obra española "Sahara: La barca del desierto" y tuvo en paralelo el 8° Congreso Iberoamericano de Teatro.',
+      'About 30 companies from Spain, Uruguay, Chile, Portugal, Mexico, Brazil, the Dominican Republic, Argentina and Colombia, with stage and street theater, children’s shows and puppets. It opened with the Spanish play "Sahara: La barca del desierto", alongside the 8th Ibero-American Theater Congress.'
+    ),
+    recap: b(
+      'A pesar del sismo, se presentaron todas las obras anunciadas. Como la Sala Fundadores del Teatro Los Fundadores quedó cerrada, sus funciones pasaron al Auditorio del Bloque K de la Universidad Nacional.',
+      'Despite the earthquake, every announced play went on. Since the Fundadores hall at Teatro Los Fundadores was closed, its shows moved to the Block K Auditorium at the Universidad Nacional.'
+    ),
+    interested: 430,
+    source: { label: 'festivaldemanizales.com', url: 'https://festivaldemanizales.com/' },
+  },
+  {
+    id: 'e-uamfest',
+    name: b('UAM Fest Solidario', 'UAM Fest Solidario'),
+    category: 'Culturales',
+    institution: 'uam',
+    date: '2026-09-23',
+    time: '07:30',
+    location: b('Campus UAM · Antigua Estación del Ferrocarril', 'UAM campus · Old Train Station'),
+    organizerId: 'org_uam',
+    image: photo('uamAerial'),
+    description: b(
+      '"Obras son amores y no buenas razones." Un día para encontrarnos y unirnos alrededor de la solidaridad: jornada deportiva, juegos tradicionales, Almuerzo UAM Solidario, Festival Gastronómico Solidario, bingo con el Ensamble de Vientos Enraizados y Talento UAM Solidario.',
+      '"Actions speak louder than words." A day to come together around solidarity: sports day, traditional games, UAM Solidarity Lunch, Solidarity Food Festival, bingo with the Ensamble de Vientos Enraizados and UAM Solidarity Talent show.'
+    ),
+    recap: b(
+      'Esta edición del UAM Fest se dedicó a la solidaridad después del terremoto. Las ediciones anteriores tuvieron temática retro (2023) y de las regiones de Colombia (2024).',
+      'This UAM Fest edition was dedicated to solidarity after the earthquake. Previous editions had a retro theme (2023) and a Colombian regions theme (2024).'
+    ),
+    interested: 214,
+    source: { label: 'autonoma.edu.co', url: 'https://www.autonoma.edu.co/eventos/uam-fest-solidario' },
+  },
+  {
+    id: 'e-imagen',
+    name: b('25° Festival Internacional de la Imagen', '25th International Image Festival'),
+    category: 'Culturales',
+    institution: 'ucaldas',
+    date: '2026-09-11',
+    endDate: '2026-09-18',
+    time: '',
+    location: b('Manizales y Bogotá', 'Manizales and Bogotá'),
+    organizerId: 'org_ucaldas',
+    image: img('photo-1554907984-15263bfd63bd', 1200),
+    description: b(
+      'Edición de 25 años del festival de arte, diseño, ciencia y tecnología de la Universidad de Caldas, en alianza con la Universidad Jorge Tadeo Lozano. Tema: "Imágenes que nos piensan", con el eje curatorial SENSO/grafías sobre imagen, cuerpo y archivos vivos en tiempos de inteligencia artificial.',
+      "25th anniversary edition of Universidad de Caldas' art, design, science and technology festival, in partnership with Universidad Jorge Tadeo Lozano. Theme: “Images That Think Us”, with the curatorial axis SENSO/graphies on image, body and living archives in the age of artificial intelligence."
+    ),
+    recap: b(
+      'Exposiciones, conferencias, talleres y proyecciones entre Manizales y Bogotá. Para los estudiantes de la U. de Caldas y de la Tadeo, la acreditación fue gratuita.',
+      'Exhibitions, talks, workshops and screenings across Manizales and Bogotá. Accreditation was free for U. de Caldas and Tadeo students.'
+    ),
+    interested: 265,
+    source: { label: 'festivaldelaimagen.com', url: 'https://www.festivaldelaimagen.com/' },
+  },
+  {
+    id: 'e-dni',
+    name: b('Día del Negociador Internacional (DNI)', 'International Negotiator Day (DNI)'),
+    category: 'Emprendimiento',
+    institution: 'uam',
+    date: '2026-03-18',
+    endDate: '2026-03-20',
+    time: '',
+    tentative: true,
+    location: b('Auditorio Mario Calderón Rivera y Parque de los Estudiantes (UAM)', 'Mario Calderón Rivera Auditorium and Students’ Park (UAM)'),
+    organizerId: 'org_uam',
+    image: photo('uamSede'),
+    description: b(
+      'Celebración anual del programa de Negocios Internacionales, organizada por estudiantes desde 2017. Su formato incluye una Rueda de Conferencias con egresados, un Desafío Empresarial con una empresa aliada, una Feria Empresarial en el Parque de los Estudiantes, una lunada y una Gala de Reconocimientos.',
+      'Annual celebration of the International Business program, run by students since 2017. It includes a Talk Series with alumni, a Business Challenge with a partner company, a Business Fair in the Students’ Park, an evening get-together and an Awards Gala.'
+    ),
+    recap: b(
+      'En la edición de 2025 (la novena, por los 15 años del programa) la Feria Empresarial reunió a más de 38 emprendimientos. La fecha exacta de 2026 aquí es aproximada.',
+      'At the 2025 edition (the ninth, for the program’s 15th anniversary) the Business Fair brought together more than 38 ventures. The exact 2026 date shown here is approximate.'
+    ),
+    interested: 172,
+    source: { label: 'autonoma.edu.co (edición 2025)', url: 'https://www.autonoma.edu.co/blog/noticias/la-uam-celebra-con-exito-el-noveno-dia-del-negociador-internacional' },
   },
 ];
 
+// ======================= POSTS (fictional people, real context) =======================
 export const initialPosts = [
   {
-    id: 'post1',
-    authorId: 'clubs',
+    id: 'post-sim',
+    authorId: 'laura',
     type: 'evento',
     text: b(
-      '🎉 ¡Se viene el UAM Fest! Música en vivo, comida de emprendimientos estudiantiles y muchas actividades. Marca "Me interesa" para recibir recordatorios. (Evento de demostración)',
-      '🎉 UAM Fest is coming! Live music, food from student businesses and lots of activities. Tap "Interested" to get reminders. (Demo event)'
-    ),
-    image: img('photo-1470229722913-7c0e2dbbafd3', 1200),
-    ref: { kind: 'event', id: 'e1' },
-    likes: 128,
-    shares: 21,
-    createdAt: minutesAgo(35),
-    comments: [
-      { id: 'c1', authorId: 'daniela', text: b('¡No me lo pierdo! ¿Habrá zona de comida?', "Wouldn't miss it! Will there be a food area?"), createdAt: minutesAgo(20) },
-      { id: 'c2', authorId: 'mariana', text: b('Sí 🙌 Dulce Campus va a tener stand.', 'Yes 🙌 Dulce Campus will have a stand.'), createdAt: minutesAgo(12) },
-    ],
-  },
-  {
-    id: 'post2',
-    authorId: 'santiago',
-    type: 'producto',
-    text: b(
-      'Vendo mi ThinkPad T480 porque me cambié a un equipo de escritorio. Le funciona todo perfecto, batería con buena duración y 16 GB de RAM. Se puede probar en el campus antes de comprar. Escríbanme por aquí 👇',
-      "Selling my ThinkPad T480 because I switched to a desktop. Everything works perfectly, good battery life and 16 GB of RAM. You can try it on campus before buying. Message me here 👇"
-    ),
-    image: img('photo-1496181133206-80ce9b88a853', 1200),
-    ref: { kind: 'product', id: 'p1' },
-    likes: 34,
-    shares: 4,
-    createdAt: minutesAgo(95),
-    comments: [
-      { id: 'c3', authorId: 'tomas', text: b('¿Le sirve para correr MATLAB?', 'Can it run MATLAB?'), createdAt: minutesAgo(70) },
-    ],
-  },
-  {
-    id: 'post3',
-    authorId: 'laura',
-    type: 'general',
-    text: b(
-      '¿Alguien está armando grupo de estudio para el parcial de Estadística del jueves? Podemos reunirnos en la biblioteca desde las 2:00 p. m. Yo llevo los ejercicios resueltos del taller 3 📚',
-      "Is anyone putting together a study group for Thursday's Statistics exam? We can meet at the library from 2:00 PM. I'll bring the solved exercises from worksheet 3 📚"
+      'Hoy es el Simulacro Nacional 🚨 Primer momento a las 10:00 a. m. y el segundo a las 2:00 p. m. Este año lo movieron de septiembre a octubre por el terremoto del 10 de agosto, así que tomémoslo en serio: ubiquen la ruta de evacuación de su bloque y el punto de encuentro 🙏',
+      "Today is the National Drill 🚨 First moment at 10:00 AM and the second at 2:00 PM. This year it moved from September to October because of the August 10 earthquake, so let's take it seriously: find your building's evacuation route and meeting point 🙏"
     ),
     image: null,
-    likes: 19,
-    shares: 2,
-    createdAt: minutesAgo(140),
+    ref: { kind: 'event', id: 'e-sim' },
+    likes: 143,
+    shares: 58,
+    createdAt: at('2026-10-21', '07:45'),
     comments: [
-      {
-        id: 'c4',
-        authorId: 'andres',
-        text: b('Me uno. También puedo explicar la parte de distribuciones.', "I'm in. I can also explain the distributions part."),
-        createdAt: minutesAgo(120),
-      },
+      { id: 'c1', authorId: 'daniela', text: b('En Fisioterapia nos dijeron que salimos por la escalera del lado del parque.', 'In Physical Therapy we were told to use the stairs on the park side.'), createdAt: at('2026-10-21', '08:02') },
+      { id: 'c2', authorId: 'mateo', text: b('En la Nacional también participamos. Después de agosto nadie se lo toma a chiste.', "We're taking part at the Nacional too. After August nobody takes it lightly."), createdAt: at('2026-10-21', '08:20') },
     ],
   },
   {
-    id: 'post4',
+    id: 'post-sazon',
     authorId: 'daniela',
     type: 'emprendimiento',
     text: b(
-      'Hoy en Sazón de Casa tenemos ajiaco con arroz, aguacate y jugo de mora 🍲 Quedan 12 almuerzos. Pedidos antes de las 10:00 a. m. con entrega en la portería principal.',
-      "Today at Sazón de Casa we have ajiaco with rice, avocado and blackberry juice 🍲 12 lunches left. Order before 10:00 AM for pickup at the main gate."
+      'Hoy en Sazón de Casa: ajiaco con arroz, aguacate y jugo de mora 🍲 Quedan 12 almuerzos. Pedidos antes de las 10:00 a. m. (¡antes del simulacro!) con entrega en la portería de la UAM.',
+      "Today at Sazón de Casa: ajiaco with rice, avocado and blackberry juice 🍲 12 lunches left. Order before 10:00 AM (before the drill!) for pickup at the UAM gate."
     ),
     image: img('photo-1504674900247-0877df9cc836', 1200),
     ref: { kind: 'service', id: 's7' },
     likes: 57,
     shares: 9,
-    createdAt: minutesAgo(60 * 4),
+    createdAt: at('2026-10-21', '07:10'),
     comments: [],
   },
   {
-    id: 'post5',
-    authorId: 'valentina',
-    type: 'servicio',
+    id: 'post-salud',
+    authorId: 'isabella',
+    type: 'evento',
     text: b(
-      '¿Tienes un emprendimiento y todavía no tienes logo? Abrí cupos para diseñar identidad visual a emprendedores de la universidad. Precio especial para estudiantes ✨ Pueden ver mi portafolio en mi perfil.',
-      "Do you have a business but no logo yet? I've opened spots to design brand identities for student entrepreneurs. Special student pricing ✨ You can see my portfolio on my profile."
+      'En la U. de Caldas arrancó "Pare Parcero", la Semana de la Salud 2026 💚 Va hasta hoy, así que si están por la sede central pasen por las actividades de bienestar.',
+      'At U. de Caldas, "Pare Parcero", the 2026 Health Week, is on 💚 It runs until today, so if you’re near the main campus, stop by the wellbeing activities.'
     ),
-    image: img('photo-1561070791-2526d30994b5', 1200),
-    ref: { kind: 'service', id: 's3' },
-    likes: 41,
+    image: photo('ucaldas'),
+    ref: { kind: 'event', id: 'e-salud' },
+    likes: 38,
     shares: 6,
-    createdAt: minutesAgo(60 * 7),
+    createdAt: at('2026-10-20', '12:10'),
+    comments: [],
+  },
+  {
+    id: 'post-dni',
+    authorId: 'camila',
+    type: 'emprendimiento',
+    text: b(
+      'En Negocios Internacionales ya estamos pensando en el próximo Día del Negociador Internacional 🌎 Si tienen emprendimiento y quieren estar en la Feria Empresarial del Parque de los Estudiantes, escríbanme y los anoto en la lista de interesados.',
+      "In International Business we're already planning the next International Negotiator Day 🌎 If you have a business and want a spot at the Business Fair in the Students' Park, message me and I'll add you to the list."
+    ),
+    image: photo('uamSede'),
+    ref: { kind: 'event', id: 'e-dni' },
+    likes: 49,
+    shares: 11,
+    createdAt: at('2026-10-20', '15:00'),
     comments: [
-      { id: 'c5', authorId: 'camila', text: b('Me encantó el que le hiciste a Hilo & Barro 😍', 'Loved the one you made for Hilo & Barro 😍'), createdAt: minutesAgo(60 * 6) },
+      { id: 'c3', authorId: 'mariana', text: b('¡Dulce Campus se apunta! 🧁', 'Dulce Campus is in! 🧁'), createdAt: at('2026-10-20', '15:24') },
     ],
   },
   {
-    id: 'post6',
+    id: 'post-feria',
+    authorId: 'julian',
+    type: 'evento',
+    text: b(
+      '¿Ya cuadraron plan para la Feria de Manizales en enero? Sería la edición 70 🎉 Todavía no hay fechas oficiales, pero ya estoy contando los días.',
+      "Got plans for the Manizales Fair in January yet? It'd be the 70th edition 🎉 No official dates yet, but I'm already counting the days."
+    ),
+    image: photo('catedral'),
+    ref: { kind: 'event', id: 'e-feria' },
+    likes: 91,
+    shares: 14,
+    createdAt: at('2026-10-19', '21:30'),
+    comments: [],
+  },
+  {
+    id: 'post-laptop',
+    authorId: 'santiago',
+    type: 'producto',
+    text: b(
+      'Vendo mi ThinkPad T480 porque me pasé a un equipo de escritorio. 16 GB de RAM, batería con buena duración y corre todo lo de Sistemas. Se puede probar en la sala de cómputo antes de comprar 👇',
+      "Selling my ThinkPad T480 because I switched to a desktop. 16 GB RAM, good battery and runs everything for Systems Engineering. You can try it in the computer lab before buying 👇"
+    ),
+    image: img('photo-1496181133206-80ce9b88a853', 1200),
+    ref: { kind: 'product', id: 'p1' },
+    likes: 34,
+    shares: 4,
+    createdAt: at('2026-10-18', '11:40'),
+    comments: [{ id: 'c4', authorId: 'tomas', text: b('¿Le sirve para correr MATLAB?', 'Can it run MATLAB?'), createdAt: at('2026-10-18', '12:05') }],
+  },
+  {
+    id: 'post-llaves',
     authorId: 'felipe',
     type: 'general',
     text: b(
-      'Encontré unas llaves con un llavero azul de Totoro en el segundo piso de la biblioteca. Las dejé en la recepción. ¡Compartan para que lleguen a su dueño! 🔑',
-      'I found some keys with a blue Totoro keychain on the second floor of the library. I left them at the front desk. Share so they get back to their owner! 🔑'
+      'Encontré unas llaves con un llavero azul de Totoro en el Parque de los Estudiantes de la UAM. Las dejé en la portería principal. ¡Compartan para que lleguen a su dueño! 🔑',
+      "I found some keys with a blue Totoro keychain in UAM's Students' Park. I left them at the main gate. Share so they get back to their owner! 🔑"
     ),
     image: null,
     likes: 23,
     shares: 15,
-    createdAt: minutesAgo(60 * 11),
+    createdAt: at('2026-10-16', '13:15'),
     comments: [],
   },
   {
-    id: 'post7',
-    authorId: 'julian',
+    id: 'post-foro',
+    authorId: 'andres',
     type: 'evento',
     text: b(
-      '⚽ Abiertas las inscripciones para el Torneo Interfacultades de Fútbol Sala. Equipos de 8 jugadores. ¿Ingenierías se anima a defender el título? (Evento de demostración)',
-      '⚽ Sign-ups are open for the Inter-faculty Futsal Tournament. Teams of 8 players. Is Engineering ready to defend the title? (Demo event)'
+      'Último llamado: las inscripciones al XXIX Foro de Investigación UAM cierran este viernes 16 de octubre a las 11:59 p. m. El foro es del 11 al 13 de noviembre, híbrido y sin costo, y este año va con la Red Universitaria Mutis. Yo presento ponencia en "Agua y cambio climático" 🤞',
+      'Last call: registration for the XXIX UAM Research Forum closes this Friday, October 16 at 11:59 PM. The forum runs November 11–13, hybrid and free, together with the Mutis University Network this year. I’m presenting in the "Water and climate change" track 🤞'
     ),
-    image: img('photo-1574629810360-7efbbe195018', 1200),
-    ref: { kind: 'event', id: 'e5' },
-    likes: 66,
-    shares: 12,
-    createdAt: minutesAgo(60 * 20),
-    comments: [],
+    image: photo('uamFacade'),
+    ref: { kind: 'event', id: 'e-foro' },
+    likes: 62,
+    shares: 19,
+    createdAt: at('2026-10-14', '16:30'),
+    comments: [
+      { id: 'c5', authorId: 'laura', text: b('¡Éxitos! El 23 salen los resultados de aceptación, ¿no?', 'Good luck! Acceptance results come out on the 23rd, right?'), createdAt: at('2026-10-14', '17:02') },
+      { id: 'c6', authorId: 'andres', text: b('Sí, el viernes 23. Nervios 😅', 'Yes, Friday the 23rd. Nervous 😅'), createdAt: at('2026-10-14', '17:10') },
+    ],
   },
   {
-    id: 'post8',
+    id: 'post-hack',
+    authorId: 'mateo',
+    type: 'evento',
+    text: b(
+      'La Nacional sede Manizales hace una Hackathon el 20 y 21 de noviembre para buscar soluciones tras el sismo: vivienda, infraestructura, servicios públicos, movilidad y gestión del riesgo. Está abierta a estudiantes de varias universidades. Busco gente de la UAM y de la de Caldas para armar equipo interdisciplinario 💻🏗️',
+      'The Nacional in Manizales is hosting a Hackathon on November 20–21 to find solutions after the earthquake: housing, infrastructure, public services, mobility and risk management. It’s open to students from several universities. Looking for people from UAM and U. de Caldas for an interdisciplinary team 💻🏗️'
+    ),
+    image: photo('unalPalogrande'),
+    ref: { kind: 'event', id: 'e-hack' },
+    likes: 118,
+    shares: 47,
+    createdAt: at('2026-10-12', '19:05'),
+    comments: [
+      { id: 'c7', authorId: 'santiago', text: b('¡Me apunto! Me encargo del software.', "I'm in! I'll handle the software."), createdAt: at('2026-10-12', '19:30') },
+      { id: 'c8', authorId: 'isabella', text: b('Si necesitan diseño e ilustración para el pitch, cuenten conmigo.', 'If you need design and illustration for the pitch, count me in.'), createdAt: at('2026-10-12', '20:12') },
+    ],
+  },
+  {
+    id: 'post-cafe',
     authorId: 'tomas',
     type: 'emprendimiento',
     text: b(
-      'Les presento Café Ladera ☕ Café especial cultivado por mi familia en Caldas. Esta semana tengo bolsas de 250 g con 10% de descuento para la comunidad universitaria.',
-      "Meet Café Ladera ☕ Specialty coffee grown by my family in Caldas. This week I have 250 g bags at 10% off for the university community."
+      'Les presento Café Ladera ☕ Café especial que cultiva mi familia en Chinchiná. Esta semana, bolsas de 250 g con 10% de descuento para la comunidad universitaria.',
+      'Meet Café Ladera ☕ Specialty coffee my family grows in Chinchiná. This week, 250 g bags at 10% off for the university community.'
     ),
     image: img('photo-1509042239860-f550ce710b93', 1200),
     ref: { kind: 'service', id: 's10' },
     likes: 72,
     shares: 10,
-    createdAt: minutesAgo(60 * 28),
+    createdAt: at('2026-10-10', '09:30'),
     comments: [],
   },
-];
+  {
+    id: 'post-logo',
+    authorId: 'valentina',
+    type: 'servicio',
+    text: b(
+      '¿Tienes emprendimiento y todavía no tienes logo? Abrí cupos para diseñar identidad visual a emprendedores de las universidades de Manizales. Precio especial para estudiantes ✨',
+      'Have a business but no logo yet? I opened spots to design brand identities for student entrepreneurs across Manizales universities. Special student pricing ✨'
+    ),
+    image: img('photo-1561070791-2526d30994b5', 1200),
+    ref: { kind: 'service', id: 's3' },
+    likes: 41,
+    shares: 6,
+    createdAt: at('2026-10-07', '18:00'),
+    comments: [{ id: 'c9', authorId: 'camila', text: b('Me encantó el que le hiciste a Hilo & Barro 😍', 'Loved the one you made for Hilo & Barro 😍'), createdAt: at('2026-10-07', '18:40') }],
+  },
+  {
+    id: 'post-fit',
+    authorId: 'felipe',
+    type: 'evento',
+    text: b(
+      'Se acabó el 58° Festival Internacional de Teatro 🎭 Vi "Sahara: La barca del desierto", la obra con la que abrió. Como la Sala Fundadores sigue cerrada después del sismo, varias funciones pasaron al Auditorio del Bloque K de la Nacional y al Teatro El Galpón… y aun así se presentaron todas las obras anunciadas. Qué orgullo de ciudad.',
+      'The 58th International Theater Festival is over 🎭 I saw "Sahara: La barca del desierto", the opening play. Since the Fundadores hall is still closed after the earthquake, several shows moved to the Block K Auditorium at the Nacional and to Teatro El Galpón… and every announced play still went on. So proud of this city.'
+    ),
+    image: img('photo-1503095396549-807759245b35', 1200),
+    ref: { kind: 'event', id: 'e-fit' },
+    likes: 156,
+    shares: 22,
+    createdAt: at('2026-10-05', '10:20'),
+    comments: [
+      { id: 'c10', authorId: 'isabella', text: b('Yo fui a las de calle, ¡increíbles los títeres!', 'I went to the street shows, the puppets were amazing!'), createdAt: at('2026-10-05', '11:00') },
+    ],
+  },
+  {
+    id: 'post-cable',
+    authorId: 'laura',
+    type: 'general',
+    text: b('Volviendo a casa en el Cable Aéreo después de clase ☁️ Manizales, cómo no quererte.', 'Riding the cable car home after class ☁️ Manizales, how could I not love you.'),
+    image: photo('cableCar'),
+    likes: 88,
+    shares: 3,
+    createdAt: at('2026-09-30', '18:10'),
+    comments: [],
+  },
+  {
+    id: 'post-uamfest',
+    authorId: 'mariana',
+    type: 'emprendimiento',
+    text: b(
+      'Gracias a todos los que pasaron por el Festival Gastronómico Solidario del UAM Fest Solidario 💛 Dulce Campus vendió todo antes de las 2:00 p. m. "Obras son amores y no buenas razones" ✨',
+      "Thanks to everyone who stopped by the Solidarity Food Festival at UAM Fest Solidario 💛 Dulce Campus sold out before 2:00 PM. “Actions speak louder than words” ✨"
+    ),
+    image: photo('uamAerial'),
+    ref: { kind: 'event', id: 'e-uamfest' },
+    likes: 128,
+    shares: 21,
+    createdAt: at('2026-09-24', '09:00'),
+    comments: [
+      { id: 'c11', authorId: 'daniela', text: b('¡El almuerzo solidario estuvo delicioso!', 'The solidarity lunch was delicious!'), createdAt: at('2026-09-24', '09:35') },
+      { id: 'c12', authorId: 'julian', text: b('La jornada deportiva quedó buenísima ⚽', 'The sports day was awesome ⚽'), createdAt: at('2026-09-24', '10:10') },
+    ],
+  },
+  {
+    id: 'post-imagen',
+    authorId: 'valentina',
+    type: 'evento',
+    text: b(
+      'Fui al Festival Internacional de la Imagen de la U. de Caldas, que cumplió 25 años 🎨 El tema, "Imágenes que nos piensan", gira alrededor del cuerpo, los archivos vivos y la inteligencia artificial. Salí con mil ideas para mi proyecto de grado.',
+      'I went to U. de Caldas’ International Image Festival, which turned 25 🎨 This year’s theme, “Images That Think Us”, is about the body, living archives and artificial intelligence. I left with a thousand ideas for my thesis project.'
+    ),
+    image: img('photo-1554907984-15263bfd63bd', 1200),
+    ref: { kind: 'event', id: 'e-imagen' },
+    likes: 67,
+    shares: 8,
+    createdAt: at('2026-09-19', '18:40'),
+    comments: [],
+  },
+  {
+    id: 'post-voluntarios',
+    authorId: 'mateo',
+    type: 'general',
+    text: b(
+      'Orgulloso de mi U: en la Nacional sede Manizales más de 240 voluntarios estamos apoyando a los damnificados del terremoto del 10 de agosto. Si quieren ayudar, pregunten en su universidad por los puntos de acopio. Manizales se levanta 🤝',
+      "Proud of my university: at the Nacional in Manizales more than 240 of us are volunteering to support people affected by the August 10 earthquake. If you want to help, ask your university about donation points. Manizales rises again 🤝"
+    ),
+    image: photo('unalCable'),
+    likes: 304,
+    shares: 96,
+    createdAt: at('2026-08-23', '20:15'),
+    comments: [
+      { id: 'c13', authorId: 'laura', text: b('Gracias por lo que hacen 💛', 'Thank you for what you do 💛'), createdAt: at('2026-08-23', '20:40') },
+    ],
+  },
+].sort((a, z) => z.createdAt - a.createdAt);
 
 export const initialNotifications = [
-  {
-    id: 'n1', personId: 'mariana', createdAt: minutesAgo(8), read: false,
-    text: b('reaccionó a tu comentario en "Feria de Emprendimiento".', 'reacted to your comment on "Entrepreneurship Fair".'),
-  },
-  {
-    id: 'n2', personId: 'clubs', createdAt: minutesAgo(35), read: false,
-    text: b('publicó un nuevo evento: UAM Fest (demostración).', 'posted a new event: UAM Fest (demo).'),
-  },
-  {
-    id: 'n3', personId: 'santiago', createdAt: minutesAgo(95), read: false,
-    text: b('publicó un producto que podría interesarte.', 'posted an item you might like.'),
-  },
-  {
-    id: 'n4', personId: 'laura', createdAt: minutesAgo(60 * 5), read: true,
-    text: b('te mencionó en un grupo de estudio.', 'mentioned you in a study group.'),
-  },
+  { id: 'n1', personId: 'laura', createdAt: minutesAgo(12), read: false, text: b('te etiquetó: Simulacro Nacional hoy a las 10:00 a. m.', 'tagged you: National Drill today at 10:00 AM.') },
+  { id: 'n2', personId: 'mateo', createdAt: minutesAgo(50), read: false, text: b('te invitó a su equipo para la Hackathon UNAL.', 'invited you to his UNAL Hackathon team.') },
+  { id: 'n3', personId: 'andres', createdAt: minutesAgo(60 * 4), read: false, text: b('comentó: "¿Vas a ir al XXIX Foro de Investigación?"', 'commented: "Are you going to the XXIX Research Forum?"') },
+  { id: 'n4', personId: 'isabella', createdAt: minutesAgo(60 * 20), read: true, text: b('reaccionó a tu historia.', 'reacted to your story.') },
 ];
 
 export const initialConversations = [
@@ -637,7 +937,7 @@ export const initialConversations = [
     topic: b('Morral antirrobo para portátil', 'Anti-theft laptop backpack'),
     messages: [
       { from: 'them', text: b('¡Hola! Sí, el morral todavía está disponible 😊', 'Hi! Yes, the backpack is still available 😊'), at: minutesAgo(50) },
-      { from: 'them', text: b('¿Te queda bien vernos mañana en la cafetería?', 'Does meeting at the cafeteria tomorrow work for you?'), at: minutesAgo(49) },
+      { from: 'them', text: b('¿Te sirve vernos mañana en la estación Fundadores del Cable?', 'Can we meet tomorrow at the Fundadores cable car station?'), at: minutesAgo(49) },
     ],
     unread: true,
   },
@@ -647,8 +947,8 @@ export const initialConversations = [
     itemRef: { kind: 'service', id: 's1' },
     topic: b('Tutorías de Cálculo', 'Calculus tutoring'),
     messages: [
-      { from: 'me', text: b('Hola Andrés, ¿tienes cupo el viernes?', 'Hi Andrés, do you have a spot on Friday?'), at: minutesAgo(60 * 3) },
-      { from: 'them', text: b('Sí, a las 3:00 p. m. en la biblioteca. ¿Te sirve?', 'Yes, at 3:00 PM at the library. Does that work?'), at: minutesAgo(60 * 2.5) },
+      { from: 'me', text: b('Hola Andrés, ¿tienes cupo el jueves?', 'Hi Andrés, do you have a spot on Thursday?'), at: minutesAgo(60 * 3) },
+      { from: 'them', text: b('Sí, a las 3:00 p. m. en la biblioteca de la UAM. ¿Te sirve?', 'Yes, at 3:00 PM at the UAM library. Does that work?'), at: minutesAgo(60 * 2.5) },
     ],
     unread: false,
   },
@@ -656,14 +956,12 @@ export const initialConversations = [
 
 export const SIMULATED_REPLIES = [
   b('¡Hola! Gracias por escribir. Sí, todavía está disponible 😊', 'Hi! Thanks for writing. Yes, it is still available 😊'),
-  b('Claro que sí. ¿Te queda bien que nos veamos en el campus?', 'Sure! Would meeting on campus work for you?'),
+  b('Claro que sí. ¿Te queda bien vernos en el campus?', 'Sure! Would meeting on campus work for you?'),
   b('¡Perfecto! Te confirmo por aquí apenas pueda.', "Perfect! I'll confirm here as soon as I can."),
   b('Con gusto te doy más detalles. ¿Qué te gustaría saber?', "Happy to give you more details. What would you like to know?"),
 ];
 
-// ---------- Historias (estilo Instagram) ----------
-export const DEMO_NAME = 'Salomé Vergara';
-
+// ======================= STORIES (Instagram-style, last 24 h) =======================
 export const STORY_BACKGROUNDS = {
   gold: { css: 'linear-gradient(160deg, #FFE27A 0%, #F5B21B 60%, #E8862A 100%)', ink: true },
   sunset: { css: 'linear-gradient(160deg, #F5A524 0%, #EF5D3A 55%, #B8306F 100%)', ink: false },
@@ -674,20 +972,32 @@ export const STORY_BACKGROUNDS = {
 
 export const initialStories = [
   {
-    personId: 'clubs',
+    personId: 'laura',
     items: [
       {
         id: 'st1',
-        image: img('photo-1470229722913-7c0e2dbbafd3', 800),
-        text: b('¡Faltan 3 semanas para el UAM Fest! 🎶', 'UAM Fest is 3 weeks away! 🎶'),
-        ref: { kind: 'event', id: 'e1' },
-        createdAt: minutesAgo(40),
+        bg: 'gold',
+        text: b('Hoy 10:00 a. m. 🚨\nSimulacro Nacional\n¿Ya sabes cuál es tu punto de encuentro?', 'Today 10:00 AM 🚨\nNational Drill\nDo you know your meeting point?'),
+        ref: { kind: 'event', id: 'e-sim' },
+        createdAt: minutesAgo(25),
       },
+    ],
+  },
+  {
+    personId: 'mateo',
+    items: [
       {
         id: 'st2',
-        bg: 'sunset',
-        text: b('Buscamos voluntarios para la logística del festival. ¡Escríbenos! 🙌', 'We need volunteers for the festival logistics. Message us! 🙌'),
-        createdAt: minutesAgo(38),
+        image: photo('unalPalogrande'),
+        text: b('Armando equipo para la Hackathon 💻', 'Building a team for the Hackathon 💻'),
+        ref: { kind: 'event', id: 'e-hack' },
+        createdAt: minutesAgo(70),
+      },
+      {
+        id: 'st3',
+        bg: 'plum',
+        text: b('Buscamos:\n1 diseñador(a)\n1 ingeniero(a) civil\n1 de sistemas 👀', 'Looking for:\n1 designer\n1 civil engineer\n1 software dev 👀'),
+        createdAt: minutesAgo(68),
       },
     ],
   },
@@ -695,68 +1005,35 @@ export const initialStories = [
     personId: 'mariana',
     items: [
       {
-        id: 'st3',
-        image: img('photo-1578985545062-69928b1d9587', 800),
-        text: b('Tortas recién salidas del horno 🧁', 'Cakes fresh out of the oven 🧁'),
-        ref: { kind: 'service', id: 's8' },
-        createdAt: minutesAgo(75),
-      },
-      {
         id: 'st4',
         image: img('photo-1606313564200-e75d5e30476c', 800),
         text: b('Quedan 4 cajas de brownies para hoy', '4 boxes of brownies left for today'),
         ref: { kind: 'product', id: 'p11' },
-        createdAt: minutesAgo(70),
+        createdAt: minutesAgo(95),
       },
     ],
   },
   {
-    personId: 'laura',
+    personId: 'isabella',
     items: [
       {
         id: 'st5',
-        bg: 'gold',
-        text: b(
-          'Tip de inglés del día ✏️\n"I\'m looking forward to it" = "Tengo muchas ganas de que llegue"',
-          'English tip of the day ✏️\n"I\'m looking forward to it" = "I can\'t wait for it"'
-        ),
-        createdAt: minutesAgo(120),
+        image: photo('ucaldas'),
+        text: b('Último día de la Semana de la Salud 💚', 'Last day of Health Week 💚'),
+        ref: { kind: 'event', id: 'e-salud' },
+        createdAt: minutesAgo(130),
       },
     ],
   },
   {
-    personId: 'santiago',
+    personId: 'andres',
     items: [
       {
         id: 'st6',
-        image: img('photo-1496181133206-80ce9b88a853', 800),
-        text: b('Último día para comprar mi ThinkPad 💻', 'Last day to buy my ThinkPad 💻'),
-        ref: { kind: 'product', id: 'p1' },
-        createdAt: minutesAgo(150),
-      },
-    ],
-  },
-  {
-    personId: 'julian',
-    items: [
-      {
-        id: 'st7',
-        image: img('photo-1574629810360-7efbbe195018', 800),
-        text: b('Entrenamiento a las 4:00 p. m. ⚽', 'Practice at 4:00 PM ⚽'),
-        ref: { kind: 'event', id: 'e5' },
-        createdAt: minutesAgo(200),
-      },
-    ],
-  },
-  {
-    personId: 'daniela',
-    items: [
-      {
-        id: 'st8',
-        image: img('photo-1504674900247-0877df9cc836', 800),
-        text: b('Menú de hoy en Sazón de Casa 🍲', "Today's menu at Sazón de Casa 🍲"),
-        ref: { kind: 'service', id: 's7' },
-        createdAt: minutesAgo(260),
+        image: photo('uamFacade'),
+        text: b('Ponencia lista para el XXIX Foro 📑', 'Paper ready for the XXIX Forum 📑'),
+        ref: { kind: 'event', id: 'e-foro' },
+        createdAt: minutesAgo(190),
       },
     ],
   },
@@ -764,30 +1041,41 @@ export const initialStories = [
     personId: 'felipe',
     items: [
       {
-        id: 'st9',
-        image: img('photo-1501281668745-f7f57925c3b4', 800),
-        text: b('¿Quién se anima al Open Mic? 🎤', "Who's up for the Open Mic? 🎤"),
-        ref: { kind: 'event', id: 'e4' },
-        createdAt: minutesAgo(320),
+        id: 'st7',
+        image: photo('chipreCity'),
+        text: b('Atardecer desde Chipre 🧡', 'Sunset from Chipre 🧡'),
+        createdAt: minutesAgo(60 * 9),
       },
       {
-        id: 'st10',
-        bg: 'night',
-        text: b('Abrí 3 cupos para fotos de grado este mes 📸', 'I opened 3 spots for graduation photos this month 📸'),
+        id: 'st8',
+        image: photo('zeri'),
+        text: b('Sesión de grados en el Recinto del Pensamiento 📸', 'Graduation shoot at Recinto del Pensamiento 📸'),
         ref: { kind: 'service', id: 's4' },
-        createdAt: minutesAgo(310),
+        createdAt: minutesAgo(60 * 8),
       },
     ],
   },
   {
-    personId: 'valentina',
+    personId: 'camila',
     items: [
       {
-        id: 'st11',
-        image: img('photo-1561070791-2526d30994b5', 800),
-        text: b('Nuevo logo para Hilo & Barro ✨', 'New logo for Hilo & Barro ✨'),
-        ref: { kind: 'service', id: 's3' },
-        createdAt: minutesAgo(400),
+        id: 'st9',
+        bg: 'sunset',
+        text: b('¿Emprendes? 🌎\nArmando la lista para la Feria Empresarial del próximo DNI', 'Run a business? 🌎\nBuilding the list for the next DNI Business Fair'),
+        ref: { kind: 'event', id: 'e-dni' },
+        createdAt: minutesAgo(60 * 11),
+      },
+    ],
+  },
+  {
+    personId: 'daniela',
+    items: [
+      {
+        id: 'st10',
+        image: img('photo-1504674900247-0877df9cc836', 800),
+        text: b('Menú de hoy en Sazón de Casa 🍲', "Today's menu at Sazón de Casa 🍲"),
+        ref: { kind: 'service', id: 's7' },
+        createdAt: minutesAgo(60 * 3),
       },
     ],
   },
@@ -795,11 +1083,23 @@ export const initialStories = [
     personId: 'tomas',
     items: [
       {
-        id: 'st12',
+        id: 'st11',
         image: img('photo-1509042239860-f550ce710b93', 800),
         text: b('Café Ladera: 10% de descuento esta semana ☕', 'Café Ladera: 10% off this week ☕'),
         ref: { kind: 'service', id: 's10' },
-        createdAt: minutesAgo(480),
+        createdAt: minutesAgo(60 * 14),
+      },
+    ],
+  },
+  {
+    personId: 'julian',
+    items: [
+      {
+        id: 'st12',
+        image: img('photo-1574629810360-7efbbe195018', 800),
+        text: b('Entrenando para el torneo interuniversitario ⚽', 'Training for the inter-university tournament ⚽'),
+        ref: { kind: 'event', id: 'e-torneo' },
+        createdAt: minutesAgo(60 * 16),
       },
     ],
   },

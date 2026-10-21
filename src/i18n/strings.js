@@ -90,7 +90,7 @@ export const STRINGS = {
     },
     rail: {
       aria: 'Destacados', upcoming: 'Próximos eventos', seeAll: 'Ver todos', interested: '{n} interesados · {cat}',
-      demoNote: 'Eventos de demostración con datos ilustrativos.', businesses: 'Emprendimientos', explore: 'Explorar',
+      demoNote: 'Eventos reales con fuente; los marcados "demo" son ilustrativos.', businesses: 'Emprendimientos', explore: 'Explorar',
       community: 'Tu comunidad hoy', products: 'productos', services: 'servicios', events: 'eventos',
       goMarket: 'Ir al Marketplace', activeNow: 'Activos ahora',
       legal: 'Market U es un prototipo académico independiente. No representa ni está avalado oficialmente por ninguna universidad.',
@@ -122,6 +122,12 @@ export const STRINGS = {
       countMany: '{n} eventos', emptyTitle: 'No hay eventos en esta categoría',
       emptyText: 'Prueba con otra categoría o publica un evento para tu comunidad.', seeAll: 'Ver todos los eventos',
       organizer: 'Organiza: {name}', interestedPeople: '{n} personas interesadas', saveEvent: 'Guardar evento',
+      upcomingTab: 'Próximos', pastTab: 'Pasados', statusPast: 'Finalizado', statusLive: 'En curso', statusToday: 'Hoy',
+      statusTentative: 'Fechas por confirmar', studentEvent: 'Evento de estudiantes · demo', viewRecap: 'Ver resumen',
+      viewSource: 'Ver fuente oficial', source: 'Fuente: {label}', allInstitutions: 'Todas',
+      interestedPast: '{n} personas marcaron interés', emptyPastTitle: 'No hay eventos pasados con estos filtros',
+      emptyUpcomingTitle: 'No hay próximos eventos con estos filtros', institutionAria: 'Filtrar por institución',
+      realNotice: 'Los eventos con "Fuente" son reales y se tomaron de sitios oficiales y medios (octubre de 2026); toca el enlace para ver los detalles actualizados. Los marcados "demo" son ilustrativos.',
     },
     detail: {
       condition: 'Estado:', posted: 'Publicado {time}', description: 'Descripción', seller: 'Vendedor',
@@ -129,7 +135,14 @@ export const STRINGS = {
       sampleRating: 'calificación de ejemplo', contactVia: 'Contacto: {c}', founder: 'Emprendedor(a)',
       provider: 'Ofrece el servicio', aboutEvent: 'Sobre el evento', organizer: 'Organiza',
       illustrative: 'La fecha, el horario y el lugar son datos ilustrativos para la demostración y no corresponden a información oficial verificada.',
-      askOrganizer: 'Preguntar al organizador',
+      askOrganizer: 'Preguntar al organizador', recap: 'Así se vivió',
+      sourceNote: 'Información tomada de {label}. Verifica cambios de última hora en el sitio oficial.',
+      tentativeNote: 'Las fechas exactas aún no son oficiales; se muestran como referencia.',
+    },
+    credits: {
+      link: 'Créditos de fotos', title: 'Créditos de fotos',
+      intro: 'Las fotos de Manizales y sus universidades son reales y vienen de Wikimedia Commons, con licencias libres que piden dar crédito al autor. Las fotos de productos y comida son de Unsplash.',
+      photoBy: 'Foto: {author} · {license}', viewOriginal: 'Ver original',
     },
     chat: {
       s1: '¡Hola! ¿Todavía está disponible?', s2: '¿Podrías darme más detalles?', s3: '¿Dónde nos podemos encontrar en el campus?',
@@ -303,7 +316,7 @@ export const STRINGS = {
     },
     rail: {
       aria: 'Highlights', upcoming: 'Upcoming events', seeAll: 'See all', interested: '{n} interested · {cat}',
-      demoNote: 'Demo events with illustrative data.', businesses: 'Student businesses', explore: 'Explore',
+      demoNote: 'Real events with sources; those marked "demo" are illustrative.', businesses: 'Student businesses', explore: 'Explore',
       community: 'Your community today', products: 'products', services: 'services', events: 'events',
       goMarket: 'Go to Marketplace', activeNow: 'Active now',
       legal: 'Market U is an independent academic prototype. It does not represent and is not officially endorsed by any university.',
@@ -335,6 +348,12 @@ export const STRINGS = {
       countMany: '{n} events', emptyTitle: 'No events in this category',
       emptyText: 'Try another category or post an event for your community.', seeAll: 'See all events',
       organizer: 'Organizer: {name}', interestedPeople: '{n} people interested', saveEvent: 'Save event',
+      upcomingTab: 'Upcoming', pastTab: 'Past', statusPast: 'Ended', statusLive: 'Happening now', statusToday: 'Today',
+      statusTentative: 'Dates TBC', studentEvent: 'Student event · demo', viewRecap: 'See recap',
+      viewSource: 'Official source', source: 'Source: {label}', allInstitutions: 'All',
+      interestedPast: '{n} people were interested', emptyPastTitle: 'No past events with these filters',
+      emptyUpcomingTitle: 'No upcoming events with these filters', institutionAria: 'Filter by institution',
+      realNotice: 'Events with a "Source" are real, taken from official sites and news outlets (October 2026); tap the link for up-to-date details. Events marked "demo" are illustrative.',
     },
     detail: {
       condition: 'Condition:', posted: 'Posted {time}', description: 'Description', seller: 'Seller',
@@ -342,7 +361,14 @@ export const STRINGS = {
       sampleRating: 'sample rating', contactVia: 'Contact: {c}', founder: 'Founder',
       provider: 'Service provider', aboutEvent: 'About the event', organizer: 'Organizer',
       illustrative: 'The date, time and place are illustrative demo data and are not verified official information.',
-      askOrganizer: 'Ask the organizer',
+      askOrganizer: 'Ask the organizer', recap: 'How it went',
+      sourceNote: 'Information from {label}. Check the official site for last-minute changes.',
+      tentativeNote: 'Exact dates are not official yet; shown for reference.',
+    },
+    credits: {
+      link: 'Photo credits', title: 'Photo credits',
+      intro: 'Photos of Manizales and its universities are real, from Wikimedia Commons, under free licenses that require crediting the author. Product and food photos are from Unsplash.',
+      photoBy: 'Photo: {author} · {license}', viewOriginal: 'View original',
     },
     chat: {
       s1: 'Hi! Is it still available?', s2: 'Could you give me more details?', s3: 'Where can we meet on campus?',
@@ -448,6 +474,7 @@ export const CATEGORY_EN = {
   Culturales: 'Cultural',
   Sociales: 'Social',
   Emprendimiento: 'Entrepreneurship',
+  Comunidad: 'Community',
 };
 
 export const CONDITION_LABELS = {

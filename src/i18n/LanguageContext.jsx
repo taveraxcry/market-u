@@ -84,6 +84,24 @@ export function LanguageProvider({ children }) {
       return date.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' });
     };
 
+    // "11–13 de noviembre" / "November 11–13"; adds the year when it isn't the current one.
+    const eventRange = (start, end) => {
+      if (!start) return t('time.tbd');
+      const a = new Date(`${start}T12:00:00`);
+      if (!end || end === start) return eventDate(start);
+      const z = new Date(`${end}T12:00:00`);
+      const year = z.getFullYear() !== new Date().getFullYear() ? ` ${lang === 'es' ? 'de ' : ''}${z.getFullYear()}` : '';
+      const month = (d) => d.toLocaleDateString(locale, { month: 'long' });
+      if (a.getMonth() === z.getMonth()) {
+        return lang === 'es'
+          ? `${a.getDate()}–${z.getDate()} de ${month(z)}${year}`
+          : `${month(z)} ${a.getDate()}–${z.getDate()}${year ? `,${year}` : ''}`;
+      }
+      return lang === 'es'
+        ? `${a.getDate()} de ${month(a)} – ${z.getDate()} de ${month(z)}${year}`
+        : `${month(a)} ${a.getDate()} – ${month(z)} ${z.getDate()}${year ? `,${year}` : ''}`;
+    };
+
     const eventDateParts = (iso) => {
       const date = new Date(`${iso}T12:00:00`);
       if (Number.isNaN(date.getTime())) return { day: '--', month: '---' };
@@ -100,7 +118,7 @@ export function LanguageProvider({ children }) {
       return `${h12}:${match[2]} ${suffix}`;
     };
 
-    return { lang, setLang, t, tx, tAll, tc, tCondition, tContact, timeAgo, eventDate, eventDateParts, formatTime };
+    return { lang, setLang, t, tx, tAll, tc, tCondition, tContact, timeAgo, eventDate, eventRange, eventDateParts, formatTime };
   }, [lang, setLang]);
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
