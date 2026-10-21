@@ -1,7 +1,7 @@
 // Turns the Vite build (dist/dev.html + assets) into ONE self-contained
 // index.html at the project root, so the app works by opening the file
 // directly in the browser (file://), without a server.
-import { readFileSync, writeFileSync, rmSync, existsSync } from 'node:fs';
+import { cpSync, existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -20,7 +20,9 @@ html = html.replace(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"[^>]*>/g, (tag
 // Inline the JavaScript bundle. External module scripts are blocked on file://,
 // inline ones are not. Escape sequences that would end the <script> tag early.
 html = html.replace(/<script type="module" crossorigin src="([^"]+)"><\/script>/g, (_, src) => {
-  const code = read(src).replace(/<\/script/gi, '<\/script').replace(/<!--/g, '<\!--');
+  const code = read(src)
+    .replace(/<\/script/gi, () => '<\\/script')
+    .replace(/<!--/g, () => '<\\!--');
   return `<script type="module">\n${code}\n</script>`;
 });
 
@@ -37,5 +39,10 @@ if (/src="\.?\/assets\//.test(html) || /href="\.?\/assets\//.test(html)) {
 
 const banner = '<!-- Archivo generado automáticamente con "npm run build". Para editar la app, modifica src/ y vuelve a compilar. -->\n';
 writeFileSync(join(root, 'index.html'), banner + html);
+
+// Files needed to install the app on a phone ("Agregar a pantalla de inicio").
+// They are only used when the site is served over http(s), e.g. GitHub Pages.
+cpSync(join(dist, 'manifest.webmanifest'), join(root, 'manifest.webmanifest'));
+cpSync(join(dist, 'icons'), join(root, 'icons'), { recursive: true });
 rmSync(dist, { recursive: true, force: true });
 console.log(`index.html listo (${Math.round(Buffer.byteLength(html) / 1024)} KB). Ábrelo con doble clic.`);

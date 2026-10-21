@@ -329,6 +329,9 @@ export default function AuthScreen() {
 
   return (
     <div className="auth">
+      <div className="auth__panel-top">
+        <LanguageToggle />
+      </div>
       <section className="auth__hero">
         <div className="auth__hero-bg" aria-hidden="true">
           <span className="blob blob--1" />
@@ -355,12 +358,6 @@ export default function AuthScreen() {
       </section>
 
       <section className="auth__panel">
-        <div className="auth__panel-top">
-          <div className="auth__mobile-brand">
-            <Logo size={38} />
-          </div>
-          <LanguageToggle />
-        </div>
         <div className="auth-card" key={mode}>
           {mode === 'login' ? (
             <LoginForm onSwitch={() => setMode('register')} onForgot={() => setForgotOpen(true)} />

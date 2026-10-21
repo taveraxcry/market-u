@@ -30,7 +30,9 @@ export default function ProductCard({ product }) {
       </div>
       <div className="item-card__body">
         <p className="item-card__price">{formatCOP(product.price)}</p>
-        <h3 className="item-card__title">{title}</h3>
+        <h3 className="item-card__title">
+          <button type="button" className="item-card__title-btn" onClick={open}>{title}</button>
+        </h3>
         <p className="item-card__meta">
           <span className="pill pill--soft">{tc(product.category)}</span>
         </p>
@@ -39,9 +41,11 @@ export default function ProductCard({ product }) {
         </p>
       </div>
       <div className="item-card__actions">
-        <button className="btn btn--soft btn--sm" onClick={open}>{t('common.viewProduct')}</button>
+        <button className="btn btn--soft btn--sm item-card__view" onClick={open}>{t('common.viewProduct')}</button>
         <button className="btn btn--primary btn--sm" onClick={() => openContact('product', product.id)}>
-          <MessageCircle size={16} /> {t('common.contactSeller')}
+          <MessageCircle size={16} />
+          <span className="label-long">{t('common.contactSeller')}</span>
+          <span className="label-short">{t('common.contact')}</span>
         </button>
       </div>
     </article>

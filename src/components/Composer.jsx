@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Briefcase, CalendarDays, ImagePlus, Lightbulb, Send, Tag } from 'lucide-react';
 import { useApp } from '../context/AppContext.jsx';
 import { useI18n } from '../i18n/LanguageContext.jsx';
@@ -11,10 +11,23 @@ const QUICK = [
   { type: 'emprendimiento', labelKey: 'composer.business', icon: Lightbulb, tone: 'amber' },
 ];
 
+// True on small phones, where the long placeholder doesn't fit.
+function useSmallScreen(query = '(max-width: 420px)') {
+  const [match, setMatch] = useState(() => window.matchMedia(query).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    const onChange = () => setMatch(mq.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, [query]);
+  return match;
+}
+
 export default function Composer() {
   const { user, createPublication, setCreateType, notify } = useApp();
   const { t } = useI18n();
   const [text, setText] = useState('');
+  const small = useSmallScreen();
 
   const publish = (e) => {
     e.preventDefault();
@@ -36,7 +49,7 @@ export default function Composer() {
           rows={text ? 3 : 1}
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder={t('composer.placeholder')}
+          placeholder={t(small ? 'composer.placeholderShort' : 'composer.placeholder')}
         />
         <button type="submit" className="btn btn--primary composer__send" disabled={!text.trim()}>
           <Send size={16} /> <span>{t('common.publish')}</span>

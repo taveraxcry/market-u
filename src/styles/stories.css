@@ -217,6 +217,10 @@
   background: #000;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
   outline: none;
+  transition: transform 0.3s var(--ease);
+}
+.story-stage.is-dragging {
+  transition: none;
 }
 .story-stage--in {
   animation: stage-in 0.4s var(--spring);
@@ -346,7 +350,8 @@
   position: absolute;
   inset: 0;
   cursor: pointer;
-  touch-action: manipulation;
+  touch-action: none; /* we handle taps, holds and swipes ourselves */
+  -webkit-touch-callout: none;
 }
 .story-media::before,
 .story-media::after {
@@ -545,7 +550,7 @@
 .story-create {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 240px;
-  gap: 24px;
+  gap: 16px 24px;
 }
 .story-create__form {
   display: flex;

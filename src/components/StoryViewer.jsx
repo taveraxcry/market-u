@@ -4,10 +4,13 @@ import { useApp } from '../context/AppContext.jsx';
 import { STORY_BACKGROUNDS } from '../data/sampleData.js';
 import { useI18n } from '../i18n/LanguageContext.jsx';
 import Avatar from './Avatar.jsx';
+import { haptic } from '../utils/format.js';
 import { REF_LABELS } from './postTypes.js';
 
 const DURATION = 5000; // ms per story
 const HOLD_DELAY = 180; // ms before a press counts as "hold to pause"
+const SWIPE_CLOSE = 110; // px down to close (phones)
+const SWIPE_SIDE = 60; // px sideways to jump to the next/previous person
 
 export default function StoryViewer() {
   const { storyViewer } = useApp();
@@ -40,6 +43,7 @@ function Viewer({ queue, start }) {
   const [failedIds, setFailedIds] = useState(() => new Set());
   const [reply, setReply] = useState('');
   const [likeBurst, setLikeBurst] = useState(0);
+  const [dragY, setDragY] = useState(0);
   const holdTimer = useRef(null);
   const pressStart = useRef(null);
   const stageRef = useRef(null);
@@ -76,6 +80,25 @@ function Viewer({ queue, start }) {
     }
     setCycle((c) => c + 1);
   }, [g, i]);
+
+  // Jump straight to another person's stories (horizontal swipe).
+  const goGroup = useCallback(
+    (delta) => {
+      const target = g + delta;
+      if (target < 0) {
+        setI(0);
+      } else if (target >= groups.length) {
+        closeStories();
+        return;
+      } else {
+        setDir(delta > 0 ? 'next' : 'prev');
+        setG(target);
+        setI(delta > 0 ? firstUnseen(groups[target], seenStories) : 0);
+      }
+      setCycle((c) => c + 1);
+    },
+    [g, groups, seenStories, closeStories]
+  );
 
   // ----- side effects -----
   useEffect(() => {
@@ -119,27 +142,50 @@ function Viewer({ queue, start }) {
 
   if (!group || !item) return null;
 
-  // ----- tap / hold on the story -----
+  // ----- tap, hold and swipe on the story -----
   const onPointerDown = (e) => {
     if (e.button !== undefined && e.button !== 0) return;
-    pressStart.current = { x: e.clientX, time: Date.now() };
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+    pressStart.current = { x: e.clientX, y: e.clientY, moved: false };
     holdTimer.current = setTimeout(() => setHeld(true), HOLD_DELAY);
+  };
+  const onPointerMove = (e) => {
+    const p = pressStart.current;
+    if (!p) return;
+    const dx = e.clientX - p.x;
+    const dy = e.clientY - p.y;
+    if (!p.moved && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) {
+      p.moved = true;
+      clearTimeout(holdTimer.current);
+      setHeld(true); // pause while dragging
+    }
+    if (p.moved && dy > 0 && Math.abs(dy) > Math.abs(dx)) setDragY(dy);
   };
   const onPointerUp = (e) => {
     clearTimeout(holdTimer.current);
+    const p = pressStart.current;
+    pressStart.current = null;
     const wasHeld = held;
     setHeld(false);
-    if (!pressStart.current || wasHeld) return;
+    setDragY(0);
+    if (!p) return;
+    const dx = e.clientX - p.x;
+    const dy = e.clientY - p.y;
+    if (p.moved) {
+      if (dy > SWIPE_CLOSE && Math.abs(dy) > Math.abs(dx)) closeStories();
+      else if (Math.abs(dx) > SWIPE_SIDE && Math.abs(dx) > Math.abs(dy)) goGroup(dx < 0 ? 1 : -1);
+      return;
+    }
+    if (wasHeld) return;
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = pressStart.current.x - rect.left;
-    pressStart.current = null;
-    if (x < rect.width * 0.3) prev();
+    if (p.x - rect.left < rect.width * 0.3) prev();
     else next();
   };
-  const onPointerLeave = () => {
+  const onPointerCancel = () => {
     clearTimeout(holdTimer.current);
     pressStart.current = null;
     setHeld(false);
+    setDragY(0);
   };
 
   const bg = STORY_BACKGROUNDS[item.bg] || STORY_BACKGROUNDS.sunset;
@@ -149,7 +195,10 @@ function Viewer({ queue, start }) {
   const refItem = item.ref ? findItem(item.ref.kind, item.ref.id) : null;
 
   const like = () => {
-    if (!liked) setLikeBurst((n) => n + 1);
+    if (!liked) {
+      setLikeBurst((n) => n + 1);
+      haptic();
+    }
     toggleStoryLike(item.id);
   };
 
@@ -169,7 +218,10 @@ function Viewer({ queue, start }) {
   const stop = (e) => e.stopPropagation();
 
   return (
-    <div className="story-viewer" role="dialog" aria-modal="true" aria-label={t('stories.viewerLabel', { name: person.name })}>
+    <div
+      className="story-viewer"
+      style={dragY ? { backgroundColor: `rgba(11, 10, 14, ${Math.max(0.2, 1 - dragY / 500)})` } : undefined}
+      role="dialog" aria-modal="true" aria-label={t('stories.viewerLabel', { name: person.name })}>
       <div
         className="story-viewer__backdrop"
         style={showImage ? { backgroundImage: `url("${item.image}")` } : { background: bg.css }}
@@ -183,7 +235,13 @@ function Viewer({ queue, start }) {
         <ChevronLeft size={22} />
       </button>
 
-      <div className={`story-stage story-stage--${dir}`} key={group.personId} ref={stageRef} tabIndex={-1}>
+      <div
+        className={`story-stage story-stage--${dir} ${dragY ? 'is-dragging' : ''}`}
+        key={group.personId}
+        ref={stageRef}
+        tabIndex={-1}
+        style={dragY ? { transform: `translateY(${dragY}px) scale(${Math.max(0.85, 1 - dragY / 1500)})` } : undefined}
+      >
         {/* progress */}
         <div className="story-progress">
           {group.items.map((it, idx) => (
@@ -214,8 +272,9 @@ function Viewer({ queue, start }) {
         <div
           className={`story-media ${held ? 'is-held' : ''}`}
           onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
-          onPointerLeave={onPointerLeave}
+          onPointerCancel={onPointerCancel}
           onContextMenu={(e) => e.preventDefault()}
         >
           {showImage ? (

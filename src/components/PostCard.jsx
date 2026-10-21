@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { ArrowUpRight, Heart, MessageCircle, Send, Share2 } from 'lucide-react';
 import { useApp } from '../context/AppContext.jsx';
 import { useI18n } from '../i18n/LanguageContext.jsx';
-import { formatCOP } from '../utils/format.js';
+import { formatCOP, haptic } from '../utils/format.js';
 import Avatar from './Avatar.jsx';
 import SmartImage from './SmartImage.jsx';
 import StoryAvatar from './StoryAvatar.jsx';
@@ -42,6 +42,8 @@ export default function PostCard({ post }) {
   const [showComments, setShowComments] = useState(false);
   const [draft, setDraft] = useState('');
   const [burst, setBurst] = useState(0);
+  const lastTap = useRef(0);
+  const lastDoubleLike = useRef(0);
 
   const author = getPerson(post.authorId);
   const type = POST_TYPES[post.type] || POST_TYPES.general;
@@ -56,10 +58,24 @@ export default function PostCard({ post }) {
     toggleLike(post.id);
   };
 
-  // Double-click the photo to like, like on Instagram.
+  // Double-click (computer) or double-tap (phone) the photo to like, like on Instagram.
   const doubleLike = () => {
+    const now = Date.now();
+    if (now - lastDoubleLike.current < 500) return; // a double-tap can also fire dblclick
+    lastDoubleLike.current = now;
     setBurst((n) => n + 1);
     if (!isLiked) toggleLike(post.id);
+    else haptic();
+  };
+  const onMediaTap = (e) => {
+    if (e.pointerType !== 'touch') return;
+    const now = Date.now();
+    if (now - lastTap.current < 300) {
+      lastTap.current = 0;
+      doubleLike();
+    } else {
+      lastTap.current = now;
+    }
   };
 
   const submitComment = (e) => {
@@ -95,7 +111,7 @@ export default function PostCard({ post }) {
       </p>
 
       {post.image && (
-        <div className="post__media" onDoubleClick={doubleLike} title={t('post.doubleTap')}>
+        <div className="post__media" onDoubleClick={doubleLike} onPointerUp={onMediaTap} title={t('post.doubleTap')}>
           <SmartImage src={post.image} alt={t('post.imageAlt', { name: author.name })} category={post.type} className="post__img" />
           {burst > 0 && <Heart key={burst} className="post__burst" size={110} fill="currentColor" aria-hidden="true" />}
         </div>

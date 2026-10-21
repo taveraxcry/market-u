@@ -39,3 +39,12 @@ export function uid(prefix = 'id') {
 }
 
 export const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
+
+/** Short vibration on phones that support it (Android). Silently ignored elsewhere. */
+export function haptic(ms = 10) {
+  try {
+    navigator.vibrate?.(ms);
+  } catch {
+    /* not supported */
+  }
+}

@@ -74,6 +74,7 @@ export const STRINGS = {
     },
     composer: {
       label: 'Escribe una publicación', placeholder: '¿Qué quieres compartir con la comunidad universitaria?',
+      placeholderShort: '¿Qué quieres compartir?',
       photo: 'Foto', product: 'Producto', service: 'Servicio', event: 'Evento', business: 'Emprendimiento',
       emptyError: 'Escribe algo antes de publicar.',
     },
@@ -287,6 +288,7 @@ export const STRINGS = {
     },
     composer: {
       label: 'Write a post', placeholder: 'What do you want to share with the university community?',
+      placeholderShort: 'What do you want to share?',
       photo: 'Photo', product: 'Product', service: 'Service', event: 'Event', business: 'Business',
       emptyError: 'Write something before posting.',
     },

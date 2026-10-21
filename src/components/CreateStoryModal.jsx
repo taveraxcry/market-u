@@ -103,7 +103,9 @@ function CreateStoryForm({ onClose }) {
               <p className={`story-preview__text ${image ? 'is-caption' : ''} ${!image && background.ink ? 'is-ink' : ''}`}>{text}</p>
             )}
           </div>
-          <button type="submit" className="btn btn--primary btn--block">{t('stories.share')}</button>
+        </div>
+        <div className="story-create__submit">
+          <button type="submit" className="btn btn--primary btn--block btn--lg">{t('stories.share')}</button>
         </div>
       </form>
     </Modal>

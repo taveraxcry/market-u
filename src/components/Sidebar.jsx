@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { ChevronDown, GraduationCap, LogOut, PanelLeftClose, PanelLeftOpen, PenLine, X } from 'lucide-react';
 import { useApp } from '../context/AppContext.jsx';
 import { useI18n } from '../i18n/LanguageContext.jsx';
@@ -18,12 +18,46 @@ export default function Sidebar() {
   // On phones the menu is a drawer and is never shown as an icon rail.
   const collapsed = sidebarCollapsed && !sidebarOpen;
 
+  // Swipe the drawer to the left to close it (phones).
+  const swipe = useRef(null);
+  const asideRef = useRef(null);
+  const onTouchStart = (e) => {
+    if (!sidebarOpen) return;
+    swipe.current = { x: e.touches[0].clientX, y: e.touches[0].clientY, dx: 0, horizontal: null };
+  };
+  const onTouchMove = (e) => {
+    const s = swipe.current;
+    if (!s) return;
+    const dx = e.touches[0].clientX - s.x;
+    const dy = e.touches[0].clientY - s.y;
+    if (s.horizontal === null && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) s.horizontal = Math.abs(dx) > Math.abs(dy);
+    if (!s.horizontal) return;
+    s.dx = Math.min(0, dx);
+    asideRef.current.style.transition = 'none';
+    asideRef.current.style.transform = `translateX(${s.dx}px)`;
+  };
+  const onTouchEnd = () => {
+    const s = swipe.current;
+    swipe.current = null;
+    if (!s?.horizontal) return;
+    asideRef.current.style.transition = '';
+    asideRef.current.style.transform = '';
+    if (s.dx < -70) setSidebarOpen(false);
+  };
+
   const toggleSection = (id) => setOpenSections((s) => ({ ...s, [id]: !s[id] }));
 
   return (
     <>
       <div className={`sidebar-scrim ${sidebarOpen ? 'is-visible' : ''}`} onClick={() => setSidebarOpen(false)} />
-      <aside className={`sidebar ${sidebarOpen ? 'is-open' : ''} ${collapsed ? 'is-collapsed' : ''}`} aria-label={t('nav.sideMenu')}>
+      <aside
+        ref={asideRef}
+        className={`sidebar ${sidebarOpen ? 'is-open' : ''} ${collapsed ? 'is-collapsed' : ''}`}
+        aria-label={t('nav.sideMenu')}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
         <div className="sidebar__mobile-head">
           <Logo size={34} />
           <button className="icon-btn" onClick={() => setSidebarOpen(false)} aria-label={t('nav.closeMenu')}>

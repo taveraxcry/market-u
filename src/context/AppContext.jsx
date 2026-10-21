@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import {
   DEMO_CREDENTIALS,
   DEMO_NAME,
@@ -13,7 +13,7 @@ import {
   initialStories,
 } from '../data/sampleData.js';
 import { useI18n } from '../i18n/LanguageContext.jsx';
-import { uid } from '../utils/format.js';
+import { haptic, uid } from '../utils/format.js';
 
 const AppContext = createContext(null);
 const SESSION_KEY = 'marketu:session';
@@ -102,7 +102,17 @@ export function AppProvider({ children }) {
 
   const dismissToast = useCallback((id) => setToasts((list) => list.filter((x) => x.id !== id)), []);
 
+  const viewRef = useRef('home');
+  viewRef.current = view;
+
   const setView = useCallback((next) => {
+    if (next !== viewRef.current) {
+      try {
+        history.pushState({ mu: true, view: next }, '');
+      } catch {
+        /* history unavailable */
+      }
+    }
     setViewState(next);
     setSidebarOpen(false);
     if (next !== 'search') setSearchQuery('');
@@ -140,6 +150,7 @@ export function AppProvider({ children }) {
   const toggleLike = useCallback(
     (postId) => {
       const wasLiked = liked.has(postId);
+      if (!wasLiked) haptic();
       setLiked((prev) => {
         const next = new Set(prev);
         if (wasLiked) next.delete(postId);
@@ -170,6 +181,7 @@ export function AppProvider({ children }) {
     (kind, id) => {
       const key = itemKey(kind, id);
       const wasSaved = saved.has(key);
+      haptic();
       setSaved((prev) => {
         const next = new Set(prev);
         if (next.has(key)) next.delete(key);
@@ -186,6 +198,7 @@ export function AppProvider({ children }) {
   const toggleInterest = useCallback(
     (eventId) => {
       const was = interested.has(eventId);
+      if (!was) haptic();
       setInterested((prev) => {
         const next = new Set(prev);
         if (was) next.delete(eventId);
@@ -437,6 +450,57 @@ export function AppProvider({ children }) {
     },
     [notify, t, tAll]
   );
+
+  // ---------- phone back button ----------
+  // Each time a panel opens we add a history entry, so the back button
+  // closes it instead of leaving the app. Without panels, back returns
+  // to the previous section.
+  const overlays = {
+    story: Boolean(storyViewer),
+    chat: Boolean(chatId),
+    createStory: createStoryOpen,
+    create: Boolean(createType),
+    detail: Boolean(detail),
+    sidebar: sidebarOpen,
+  };
+  const openCount = Object.values(overlays).filter(Boolean).length;
+  const overlaysRef = useRef(overlays);
+  overlaysRef.current = overlays;
+  const prevOpenCount = useRef(0);
+
+  useEffect(() => {
+    if (openCount > prevOpenCount.current) {
+      try {
+        history.pushState({ mu: true, view: viewRef.current }, '');
+      } catch {
+        /* history unavailable */
+      }
+    }
+    prevOpenCount.current = openCount;
+  }, [openCount]);
+
+  useEffect(() => {
+    try {
+      history.replaceState({ mu: true, view: viewRef.current }, '');
+    } catch {
+      /* history unavailable */
+    }
+    const onPop = (e) => {
+      const o = overlaysRef.current;
+      if (o.story) return setStoryViewer(null);
+      if (o.chat) return setChatId(null);
+      if (o.createStory) return setCreateStoryOpen(false);
+      if (o.create) return setCreateType(null);
+      if (o.detail) return setDetail(null);
+      if (o.sidebar) return setSidebarOpen(false);
+      const next = e.state?.view || 'home';
+      if (next !== 'search') setSearchQuery('');
+      setViewState(next);
+      window.scrollTo({ top: 0 });
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
 
   const value = useMemo(
     () => ({
