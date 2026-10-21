@@ -27,7 +27,7 @@ export default function Composer() {
   };
 
   return (
-    <form className="card composer" onSubmit={publish}>
+    <form className={`card composer ${text.trim() ? 'has-text' : ''}`} onSubmit={publish}>
       <div className="composer__top">
         <Avatar person={user} size={44} />
         <label className="sr-only" htmlFor="composer-input">{t('composer.label')}</label>
@@ -38,6 +38,9 @@ export default function Composer() {
           onChange={(e) => setText(e.target.value)}
           placeholder={t('composer.placeholder')}
         />
+        <button type="submit" className="btn btn--primary composer__send" disabled={!text.trim()}>
+          <Send size={16} /> <span>{t('common.publish')}</span>
+        </button>
       </div>
       <div className="composer__bottom">
         <div className="composer__options">
@@ -50,9 +53,6 @@ export default function Composer() {
             </button>
           ))}
         </div>
-        <button type="submit" className="btn btn--primary btn--sm" disabled={!text.trim()}>
-          <Send size={16} /> {t('common.publish')}
-        </button>
       </div>
     </form>
   );

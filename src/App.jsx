@@ -1,6 +1,8 @@
 import { useApp } from './context/AppContext.jsx';
 import { useI18n } from './i18n/LanguageContext.jsx';
 import ChatModal from './components/ChatModal.jsx';
+import CreateStoryModal from './components/CreateStoryModal.jsx';
+import StoryViewer from './components/StoryViewer.jsx';
 import CreatePublicationModal from './components/CreatePublicationModal.jsx';
 import DetailModal from './components/DetailModal.jsx';
 import MobileNav from './components/MobileNav.jsx';
@@ -41,7 +43,7 @@ function CurrentView({ view }) {
 }
 
 export default function App() {
-  const { user, view } = useApp();
+  const { user, view, sidebarCollapsed } = useApp();
   const { t } = useI18n();
 
   if (!user) {
@@ -54,19 +56,23 @@ export default function App() {
   }
 
   return (
-    <div className="app">
+    <div className={`app ${sidebarCollapsed ? 'app--collapsed' : ''}`}>
       <a href="#main" className="skip-link">{t('nav.skip')}</a>
       <Topbar />
       <div className="app__body">
         <Sidebar />
         <main id="main" className={`app__main ${view === 'home' ? 'app__main--home' : ''}`} tabIndex={-1}>
-          <CurrentView view={view} />
+          <div className="view" key={view}>
+            <CurrentView view={view} />
+          </div>
         </main>
       </div>
       <MobileNav />
       <DetailModal />
       <ChatModal />
       <CreatePublicationModal />
+      <CreateStoryModal />
+      <StoryViewer />
       <Toasts />
     </div>
   );

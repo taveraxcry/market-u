@@ -16,20 +16,20 @@ const CAMPUS = b('Entrega en el campus', 'Campus pickup');
 
 export const PEOPLE = {
   valentina: { id: 'valentina', name: 'Valentina Ríos', program: b('Diseño Visual', 'Visual Design'), color: '#7C3AED' },
-  santiago: { id: 'santiago', name: 'Santiago Cardona', program: b('Ingeniería de Sistemas', 'Systems Engineering'), color: '#2563EB' },
+  santiago: { id: 'santiago', name: 'Santiago Cardona', program: b('Ingeniería de Sistemas', 'Systems Engineering'), color: '#0E7C86' },
   mariana: { id: 'mariana', name: 'Mariana Ocampo', program: b('Administración de Empresas', 'Business Administration'), color: '#DB2777' },
-  julian: { id: 'julian', name: 'Julián Henao', program: b('Ingeniería Mecatrónica', 'Mechatronics Engineering'), color: '#0891B2' },
+  julian: { id: 'julian', name: 'Julián Henao', program: b('Ingeniería Mecatrónica', 'Mechatronics Engineering'), color: '#2F7D6D' },
   camila: { id: 'camila', name: 'Camila Arango', program: b('Negocios Internacionales', 'International Business'), color: '#EA580C' },
   andres: { id: 'andres', name: 'Andrés Salazar', program: b('Economía', 'Economics'), color: '#059669' },
   daniela: { id: 'daniela', name: 'Daniela Giraldo', program: b('Fisioterapia', 'Physical Therapy'), color: '#E11D48' },
-  tomas: { id: 'tomas', name: 'Tomás Villegas', program: b('Ingeniería Biomédica', 'Biomedical Engineering'), color: '#4F46E5' },
+  tomas: { id: 'tomas', name: 'Tomás Villegas', program: b('Ingeniería Biomédica', 'Biomedical Engineering'), color: '#5B3FA0' },
   laura: { id: 'laura', name: 'Laura Montoya', program: b('Lenguas Modernas', 'Modern Languages'), color: '#CA8A04' },
   felipe: { id: 'felipe', name: 'Felipe Zuluaga', program: b('Comunicación Social', 'Communications'), color: '#0D9488' },
   clubs: {
     id: 'clubs',
     name: 'Comité Estudiantil de Eventos',
     program: b('Organización estudiantil (ficticia)', 'Student organization (fictional)'),
-    color: '#3730A3',
+    color: '#2B2833',
   },
 };
 
@@ -659,4 +659,148 @@ export const SIMULATED_REPLIES = [
   b('Claro que sí. ¿Te queda bien que nos veamos en el campus?', 'Sure! Would meeting on campus work for you?'),
   b('¡Perfecto! Te confirmo por aquí apenas pueda.', "Perfect! I'll confirm here as soon as I can."),
   b('Con gusto te doy más detalles. ¿Qué te gustaría saber?', "Happy to give you more details. What would you like to know?"),
+];
+
+// ---------- Historias (estilo Instagram) ----------
+export const DEMO_NAME = 'Salomé Vergara';
+
+export const STORY_BACKGROUNDS = {
+  gold: { css: 'linear-gradient(160deg, #FFE27A 0%, #F5B21B 60%, #E8862A 100%)', ink: true },
+  sunset: { css: 'linear-gradient(160deg, #F5A524 0%, #EF5D3A 55%, #B8306F 100%)', ink: false },
+  plum: { css: 'linear-gradient(160deg, #2B1748 0%, #6B2E86 55%, #C2368C 100%)', ink: false },
+  night: { css: 'linear-gradient(160deg, #121117 0%, #2A2833 60%, #4A4552 100%)', ink: false },
+  mint: { css: 'linear-gradient(160deg, #1E7F5C 0%, #3FB27F 55%, #B9E6C9 100%)', ink: false },
+};
+
+export const initialStories = [
+  {
+    personId: 'clubs',
+    items: [
+      {
+        id: 'st1',
+        image: img('photo-1470229722913-7c0e2dbbafd3', 800),
+        text: b('¡Faltan 3 semanas para el UAM Fest! 🎶', 'UAM Fest is 3 weeks away! 🎶'),
+        ref: { kind: 'event', id: 'e1' },
+        createdAt: minutesAgo(40),
+      },
+      {
+        id: 'st2',
+        bg: 'sunset',
+        text: b('Buscamos voluntarios para la logística del festival. ¡Escríbenos! 🙌', 'We need volunteers for the festival logistics. Message us! 🙌'),
+        createdAt: minutesAgo(38),
+      },
+    ],
+  },
+  {
+    personId: 'mariana',
+    items: [
+      {
+        id: 'st3',
+        image: img('photo-1578985545062-69928b1d9587', 800),
+        text: b('Tortas recién salidas del horno 🧁', 'Cakes fresh out of the oven 🧁'),
+        ref: { kind: 'service', id: 's8' },
+        createdAt: minutesAgo(75),
+      },
+      {
+        id: 'st4',
+        image: img('photo-1606313564200-e75d5e30476c', 800),
+        text: b('Quedan 4 cajas de brownies para hoy', '4 boxes of brownies left for today'),
+        ref: { kind: 'product', id: 'p11' },
+        createdAt: minutesAgo(70),
+      },
+    ],
+  },
+  {
+    personId: 'laura',
+    items: [
+      {
+        id: 'st5',
+        bg: 'gold',
+        text: b(
+          'Tip de inglés del día ✏️\n"I\'m looking forward to it" = "Tengo muchas ganas de que llegue"',
+          'English tip of the day ✏️\n"I\'m looking forward to it" = "I can\'t wait for it"'
+        ),
+        createdAt: minutesAgo(120),
+      },
+    ],
+  },
+  {
+    personId: 'santiago',
+    items: [
+      {
+        id: 'st6',
+        image: img('photo-1496181133206-80ce9b88a853', 800),
+        text: b('Último día para comprar mi ThinkPad 💻', 'Last day to buy my ThinkPad 💻'),
+        ref: { kind: 'product', id: 'p1' },
+        createdAt: minutesAgo(150),
+      },
+    ],
+  },
+  {
+    personId: 'julian',
+    items: [
+      {
+        id: 'st7',
+        image: img('photo-1574629810360-7efbbe195018', 800),
+        text: b('Entrenamiento a las 4:00 p. m. ⚽', 'Practice at 4:00 PM ⚽'),
+        ref: { kind: 'event', id: 'e5' },
+        createdAt: minutesAgo(200),
+      },
+    ],
+  },
+  {
+    personId: 'daniela',
+    items: [
+      {
+        id: 'st8',
+        image: img('photo-1504674900247-0877df9cc836', 800),
+        text: b('Menú de hoy en Sazón de Casa 🍲', "Today's menu at Sazón de Casa 🍲"),
+        ref: { kind: 'service', id: 's7' },
+        createdAt: minutesAgo(260),
+      },
+    ],
+  },
+  {
+    personId: 'felipe',
+    items: [
+      {
+        id: 'st9',
+        image: img('photo-1501281668745-f7f57925c3b4', 800),
+        text: b('¿Quién se anima al Open Mic? 🎤', "Who's up for the Open Mic? 🎤"),
+        ref: { kind: 'event', id: 'e4' },
+        createdAt: minutesAgo(320),
+      },
+      {
+        id: 'st10',
+        bg: 'night',
+        text: b('Abrí 3 cupos para fotos de grado este mes 📸', 'I opened 3 spots for graduation photos this month 📸'),
+        ref: { kind: 'service', id: 's4' },
+        createdAt: minutesAgo(310),
+      },
+    ],
+  },
+  {
+    personId: 'valentina',
+    items: [
+      {
+        id: 'st11',
+        image: img('photo-1561070791-2526d30994b5', 800),
+        text: b('Nuevo logo para Hilo & Barro ✨', 'New logo for Hilo & Barro ✨'),
+        ref: { kind: 'service', id: 's3' },
+        createdAt: minutesAgo(400),
+      },
+    ],
+  },
+  {
+    personId: 'tomas',
+    items: [
+      {
+        id: 'st12',
+        image: img('photo-1509042239860-f550ce710b93', 800),
+        text: b('Café Ladera: 10% de descuento esta semana ☕', 'Café Ladera: 10% off this week ☕'),
+        ref: { kind: 'service', id: 's10' },
+        createdAt: minutesAgo(480),
+      },
+    ],
+  },
 ];

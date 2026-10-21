@@ -75,7 +75,7 @@ function CategorySelect({ value, onChange, options }) {
   );
 }
 
-function ImagePicker({ value, onChange, error }) {
+export function ImagePicker({ value, onChange, error }) {
   const { t } = useI18n();
   const [mode, setMode] = useState(value?.startsWith('data:') ? 'file' : 'url');
 

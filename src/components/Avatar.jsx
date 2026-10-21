@@ -1,7 +1,7 @@
 import { initials } from '../utils/format.js';
 
 export default function Avatar({ person, size = 40, ring = false }) {
-  const color = person?.color || '#3730A3';
+  const color = person?.color || '#2B2833';
   return (
     <span
       className={`avatar ${ring ? 'avatar--ring' : ''}`}

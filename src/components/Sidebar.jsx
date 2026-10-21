@@ -1,20 +1,29 @@
-import { GraduationCap, LogOut, PenLine, X } from 'lucide-react';
+import { useState } from 'react';
+import { ChevronDown, GraduationCap, LogOut, PanelLeftClose, PanelLeftOpen, PenLine, X } from 'lucide-react';
 import { useApp } from '../context/AppContext.jsx';
 import { useI18n } from '../i18n/LanguageContext.jsx';
 import Avatar from './Avatar.jsx';
 import Logo from './Logo.jsx';
-import { NAV_ITEMS } from './navigation.js';
+import { NAV_SECTIONS } from './navigation.js';
 
 export default function Sidebar() {
-  const { user, view, setView, sidebarOpen, setSidebarOpen, setCreateType, conversations, saved, logout } = useApp();
+  const {
+    user, view, setView, sidebarOpen, setSidebarOpen, sidebarCollapsed, toggleSidebar, setCreateType, conversations,
+    saved, logout,
+  } = useApp();
   const { t, tx } = useI18n();
+  const [openSections, setOpenSections] = useState({ explore: true, mine: true });
   const unread = conversations.filter((c) => c.unread).length;
   const counters = { messages: unread, saved: saved.size };
+  // On phones the menu is a drawer and is never shown as an icon rail.
+  const collapsed = sidebarCollapsed && !sidebarOpen;
+
+  const toggleSection = (id) => setOpenSections((s) => ({ ...s, [id]: !s[id] }));
 
   return (
     <>
       <div className={`sidebar-scrim ${sidebarOpen ? 'is-visible' : ''}`} onClick={() => setSidebarOpen(false)} />
-      <aside className={`sidebar ${sidebarOpen ? 'is-open' : ''}`} aria-label={t('nav.sideMenu')}>
+      <aside className={`sidebar ${sidebarOpen ? 'is-open' : ''} ${collapsed ? 'is-collapsed' : ''}`} aria-label={t('nav.sideMenu')}>
         <div className="sidebar__mobile-head">
           <Logo size={34} />
           <button className="icon-btn" onClick={() => setSidebarOpen(false)} aria-label={t('nav.closeMenu')}>
@@ -22,29 +31,66 @@ export default function Sidebar() {
           </button>
         </div>
 
-        <button className="sidebar__profile" onClick={() => setView('mine')}>
-          <Avatar person={user} size={44} ring />
-          <span>
-            <strong>{user.name}</strong>
-            <small>
-              {tx(user.program)} · {user.university.includes('Manizales') ? 'UAM' : user.university}
-            </small>
-          </span>
-        </button>
+        <div className="sidebar__top">
+          <button className="sidebar__profile" onClick={() => setView('mine')} title={collapsed ? user.name : undefined}>
+            <Avatar person={user} size={collapsed ? 40 : 44} ring />
+            <span className="sidebar__profile-text">
+              <strong>{user.name}</strong>
+              <small>
+                {tx(user.program)} · {user.university.includes('Manizales') ? 'UAM' : user.university}
+              </small>
+            </span>
+          </button>
+          <button
+            className="sidebar__collapse"
+            onClick={toggleSidebar}
+            aria-label={collapsed ? t('nav.expand') : t('nav.collapse')}
+            title={collapsed ? t('nav.expand') : t('nav.collapse')}
+            aria-expanded={!collapsed}
+          >
+            {collapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
+          </button>
+        </div>
 
         <nav className="sidebar__nav">
-          {NAV_ITEMS.map(({ view: v, labelKey, icon: Icon }) => (
-            <button
-              key={v}
-              className={`side-link ${view === v ? 'side-link--active' : ''}`}
-              onClick={() => setView(v)}
-              aria-current={view === v ? 'page' : undefined}
-            >
-              <span className="side-link__icon"><Icon size={20} /></span>
-              <span className="side-link__label">{t(labelKey)}</span>
-              {counters[v] > 0 && <span className="side-link__count">{counters[v]}</span>}
-            </button>
-          ))}
+          {NAV_SECTIONS.map((section) => {
+            const open = collapsed || openSections[section.id];
+            return (
+              <div key={section.id} className={`nav-section ${open ? 'is-open' : ''}`}>
+                <button
+                  className="nav-section__head"
+                  onClick={() => toggleSection(section.id)}
+                  aria-expanded={open}
+                  aria-controls={`nav-${section.id}`}
+                  tabIndex={collapsed ? -1 : 0}
+                >
+                  <span>{t(section.labelKey)}</span>
+                  <ChevronDown size={16} className="nav-section__chev" />
+                </button>
+                <div className="nav-section__body" id={`nav-${section.id}`}>
+                  <div className="nav-section__inner">
+                    {section.items.map(({ view: v, labelKey, icon: Icon }) => (
+                      <button
+                        key={v}
+                        className={`side-link ${view === v ? 'side-link--active' : ''}`}
+                        onClick={() => setView(v)}
+                        aria-current={view === v ? 'page' : undefined}
+                        title={collapsed ? t(labelKey) : undefined}
+                        tabIndex={open ? 0 : -1}
+                      >
+                        <span className="side-link__icon">
+                          <Icon size={19} />
+                          {collapsed && counters[v] > 0 && <span className="side-link__dot" />}
+                        </span>
+                        <span className="side-link__label">{t(labelKey)}</span>
+                        {counters[v] > 0 && <span className="side-link__count">{counters[v]}</span>}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </nav>
 
         <button
@@ -53,8 +99,9 @@ export default function Sidebar() {
             setSidebarOpen(false);
             setCreateType('general');
           }}
+          title={collapsed ? t('nav.createPost') : undefined}
         >
-          <PenLine size={18} /> {t('nav.createPost')}
+          <PenLine size={18} /> <span className="sidebar__create-label">{t('nav.createPost')}</span>
         </button>
 
         <div className="info-card">
@@ -65,8 +112,8 @@ export default function Sidebar() {
           </div>
         </div>
 
-        <button className="side-link sidebar__logout" onClick={logout}>
-          <span className="side-link__icon"><LogOut size={20} /></span>
+        <button className="side-link sidebar__logout" onClick={logout} title={collapsed ? t('nav.logout') : undefined}>
+          <span className="side-link__icon"><LogOut size={19} /></span>
           <span className="side-link__label">{t('nav.logout')}</span>
         </button>
 

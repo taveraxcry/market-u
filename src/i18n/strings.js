@@ -15,6 +15,7 @@ export const STRINGS = {
     },
     auth: {
       headline: 'Todo lo que pasa en tu universidad, en un solo lugar',
+      headlineA: 'Todo lo que pasa en tu universidad,', headlineB: 'en un solo lugar',
       lead: 'Descubre productos, servicios y emprendimientos de otros estudiantes, y entérate de los eventos universitarios sin perderte entre decenas de grupos de WhatsApp.',
       featMarket: 'Marketplace estudiantil', featServices: 'Servicios y emprendimientos', featEvents: 'Eventos universitarios',
       pilot: 'Piloto pensado para la comunidad de la Universidad Autónoma de Manizales.',
@@ -51,9 +52,10 @@ export const STRINGS = {
       messages: 'Mensajes', logout: 'Cerrar sesión', createPost: 'Crear publicación', openMenu: 'Abrir menú',
       closeMenu: 'Cerrar menú', mainSections: 'Secciones principales', sideMenu: 'Menú lateral',
       bottomNav: 'Navegación inferior', skip: 'Saltar al contenido',
+      sectionExplore: 'Explorar', sectionMine: 'Mi espacio', collapse: 'Contraer menú', expand: 'Expandir menú',
     },
     topbar: {
-      searchPh: 'Busca productos, servicios, eventos...', searchLabel: 'Buscar en Market U', clearSearch: 'Limpiar búsqueda',
+      searchPh: 'Busca productos, servicios, eventos...', searchPhShort: 'Buscar…', searchLabel: 'Buscar en Market U', clearSearch: 'Limpiar búsqueda',
       goHome: 'Ir al inicio', publish: 'Publicar', simulated: 'Simulados', noConversations: 'Aún no tienes conversaciones.',
       about: 'Sobre: {topic}', seeAllMessages: 'Ver todos los mensajes', notifications: 'Notificaciones',
       notificationsAria: 'Notificaciones, {n} sin leer', markRead: 'Marcar como leídas', userMenu: 'Menú de usuario',
@@ -83,7 +85,7 @@ export const STRINGS = {
       visible: 'Visible para la comunidad', seeMore: 'Ver más', seeLess: 'Ver menos', comments: '{n} comentarios',
       shares: '{n} veces compartido', like: 'Me gusta', comment: 'Comentar', share: 'Compartir',
       commentPh: 'Escribe un comentario…', commentLabel: 'Escribe un comentario', sendComment: 'Enviar comentario',
-      imageAlt: 'Imagen de la publicación de {name}',
+      imageAlt: 'Imagen de la publicación de {name}', likesCount: '{n} Me gusta', doubleTap: 'Doble clic para dar Me gusta',
     },
     rail: {
       aria: 'Destacados', upcoming: 'Próximos eventos', seeAll: 'Ver todos', interested: '{n} interesados · {cat}',
@@ -190,6 +192,15 @@ export const STRINGS = {
       emptyText: 'Revisa la ortografía o prueba con palabras más generales, como “libros”, “tutoría” o “fest”.',
       back: 'Volver al inicio', moreHint: 'Usa las pestañas para ver todos los resultados de cada tipo.',
     },
+    stories: {
+      aria: 'Historias', yours: 'Tu historia', add: 'Crear historia', replyTo: 'Responder a {name}…', send: 'Enviar respuesta',
+      pause: 'Pausar', play: 'Reproducir', prev: 'Historia anterior', next: 'Historia siguiente', like: 'Me gusta', close: 'Cerrar historias',
+      replySent: 'Respuesta enviada a {name} (simulación).', createTitle: 'Crear historia', textLabel: 'Texto de la historia',
+      textPh: '¿Qué está pasando en el campus?', background: 'Fondo', preview: 'Vista previa', share: 'Compartir historia',
+      errEmpty: 'Agrega un texto o una imagen para tu historia.', published: '¡Tu historia está publicada! En la versión real duraría 24 horas.',
+      topic: 'Una historia', hint: 'Toca los lados para avanzar · mantén presionado para pausar', scrollLeft: 'Ver historias anteriores', scrollRight: 'Ver más historias',
+      viewerLabel: 'Historias de {name}',
+    },
     toast: {
       shared: 'Compartiste la publicación con tu comunidad (simulación).', saved: 'Guardado. Lo encuentras en "Guardados".',
       removed: 'Eliminado de Guardados.', interested: '¡Listo! Marcaste que te interesa este evento.',
@@ -217,6 +228,7 @@ export const STRINGS = {
     },
     auth: {
       headline: 'Everything happening at your university, in one place',
+      headlineA: 'Everything happening at your university,', headlineB: 'in one place',
       lead: 'Discover products, services and businesses from other students, and keep up with university events without getting lost in dozens of WhatsApp groups.',
       featMarket: 'Student marketplace', featServices: 'Services & student businesses', featEvents: 'University events',
       pilot: 'Pilot designed for the Universidad Autónoma de Manizales community.',
@@ -253,9 +265,10 @@ export const STRINGS = {
       messages: 'Messages', logout: 'Log out', createPost: 'Create post', openMenu: 'Open menu',
       closeMenu: 'Close menu', mainSections: 'Main sections', sideMenu: 'Side menu',
       bottomNav: 'Bottom navigation', skip: 'Skip to content',
+      sectionExplore: 'Explore', sectionMine: 'My space', collapse: 'Collapse menu', expand: 'Expand menu',
     },
     topbar: {
-      searchPh: 'Search products, services, events...', searchLabel: 'Search Market U', clearSearch: 'Clear search',
+      searchPh: 'Search products, services, events...', searchPhShort: 'Search…', searchLabel: 'Search Market U', clearSearch: 'Clear search',
       goHome: 'Go to home', publish: 'Post', simulated: 'Simulated', noConversations: "You don't have any conversations yet.",
       about: 'About: {topic}', seeAllMessages: 'See all messages', notifications: 'Notifications',
       notificationsAria: 'Notifications, {n} unread', markRead: 'Mark as read', userMenu: 'User menu',
@@ -284,7 +297,7 @@ export const STRINGS = {
       visible: 'Visible to the community', seeMore: 'See more', seeLess: 'See less', comments: '{n} comments',
       shares: '{n} shares', like: 'Like', comment: 'Comment', share: 'Share',
       commentPh: 'Write a comment…', commentLabel: 'Write a comment', sendComment: 'Send comment',
-      imageAlt: "Image from {name}'s post",
+      imageAlt: "Image from {name}'s post", likesCount: '{n} likes', doubleTap: 'Double-click to like',
     },
     rail: {
       aria: 'Highlights', upcoming: 'Upcoming events', seeAll: 'See all', interested: '{n} interested · {cat}',
@@ -390,6 +403,15 @@ export const STRINGS = {
       emptyTitle: "We couldn't find anything",
       emptyText: 'Check the spelling or try broader words, like “books”, “tutoring” or “fest”.',
       back: 'Back to home', moreHint: 'Use the tabs to see all results of each type.',
+    },
+    stories: {
+      aria: 'Stories', yours: 'Your story', add: 'Add story', replyTo: 'Reply to {name}…', send: 'Send reply',
+      pause: 'Pause', play: 'Play', prev: 'Previous story', next: 'Next story', like: 'Like', close: 'Close stories',
+      replySent: 'Reply sent to {name} (simulation).', createTitle: 'Create story', textLabel: 'Story text',
+      textPh: "What's happening on campus?", background: 'Background', preview: 'Preview', share: 'Share story',
+      errEmpty: 'Add some text or an image to your story.', published: 'Your story is live! In the real version it would last 24 hours.',
+      topic: 'A story', hint: 'Tap the sides to move · hold to pause', scrollLeft: 'See previous stories', scrollRight: 'See more stories',
+      viewerLabel: "{name}'s stories",
     },
     toast: {
       shared: 'You shared the post with your community (simulation).', saved: 'Saved. You can find it in "Saved".',

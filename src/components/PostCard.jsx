@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { ChevronRight, Globe, Heart, MessageSquare, Send, Share2, ThumbsUp } from 'lucide-react';
+import { ArrowUpRight, Heart, MessageCircle, Send, Share2 } from 'lucide-react';
 import { useApp } from '../context/AppContext.jsx';
 import { useI18n } from '../i18n/LanguageContext.jsx';
 import { formatCOP } from '../utils/format.js';
 import Avatar from './Avatar.jsx';
 import SmartImage from './SmartImage.jsx';
+import StoryAvatar from './StoryAvatar.jsx';
 import { POST_TYPES, REF_LABELS } from './postTypes.js';
 
 const MAX_CHARS = 200;
@@ -28,7 +29,7 @@ function RefPreview({ refInfo }) {
         <span>{subtitle}</span>
       </span>
       <span className="ref-preview__cta">
-        {t(REF_LABELS[refInfo.kind])} <ChevronRight size={16} />
+        {t(REF_LABELS[refInfo.kind])} <ArrowUpRight size={16} />
       </span>
     </button>
   );
@@ -40,6 +41,7 @@ export default function PostCard({ post }) {
   const [expanded, setExpanded] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [draft, setDraft] = useState('');
+  const [burst, setBurst] = useState(0);
 
   const author = getPerson(post.authorId);
   const type = POST_TYPES[post.type] || POST_TYPES.general;
@@ -48,6 +50,17 @@ export default function PostCard({ post }) {
   const fullText = tx(post.text);
   const isLong = fullText.length > MAX_CHARS;
   const text = isLong && !expanded ? `${fullText.slice(0, MAX_CHARS).trimEnd()}…` : fullText;
+
+  const like = () => {
+    if (!isLiked) setBurst((n) => n + 1);
+    toggleLike(post.id);
+  };
+
+  // Double-click the photo to like, like on Instagram.
+  const doubleLike = () => {
+    setBurst((n) => n + 1);
+    if (!isLiked) toggleLike(post.id);
+  };
 
   const submitComment = (e) => {
     e.preventDefault();
@@ -59,12 +72,12 @@ export default function PostCard({ post }) {
   return (
     <article className="card post">
       <header className="post__head">
-        <Avatar person={author} size={44} />
+        <StoryAvatar personId={post.authorId} person={author} size={46} />
         <div className="post__meta">
           <strong>{author.name}</strong>
           <span>
             {author.program && <>{tx(author.program)} · </>}
-            {timeAgo(post.createdAt)} · <Globe size={12} aria-label={t('post.visible')} />
+            {timeAgo(post.createdAt)}
           </span>
         </div>
         <span className={`type-badge type-badge--${type.tone}`}>
@@ -82,35 +95,28 @@ export default function PostCard({ post }) {
       </p>
 
       {post.image && (
-        <SmartImage src={post.image} alt={t('post.imageAlt', { name: author.name })} category={post.type} className="post__img" />
+        <div className="post__media" onDoubleClick={doubleLike} title={t('post.doubleTap')}>
+          <SmartImage src={post.image} alt={t('post.imageAlt', { name: author.name })} category={post.type} className="post__img" />
+          {burst > 0 && <Heart key={burst} className="post__burst" size={110} fill="currentColor" aria-hidden="true" />}
+        </div>
       )}
 
       {post.ref && <RefPreview refInfo={post.ref} />}
 
-      <div className="post__stats">
-        <span className="post__likes">
-          <span className="like-bubble"><ThumbsUp size={11} fill="currentColor" /></span>
-          <span className="like-bubble like-bubble--heart"><Heart size={11} fill="currentColor" /></span>
-          {post.likes}
-        </span>
-        <span>
-          <button className="link-muted" onClick={() => setShowComments((v) => !v)}>
-            {t('post.comments', { n: post.comments.length })}
-          </button>{' '}
-          · {t('post.shares', { n: post.shares })}
-        </span>
-      </div>
-
       <div className="post__actions">
-        <button className={`action ${isLiked ? 'action--liked' : ''}`} onClick={() => toggleLike(post.id)} aria-pressed={isLiked}>
-          <ThumbsUp size={19} fill={isLiked ? 'currentColor' : 'none'} /> {t('post.like')}
+        <button className={`action ${isLiked ? 'action--liked' : ''}`} onClick={like} aria-pressed={isLiked} aria-label={t('post.like')}>
+          <Heart key={isLiked ? 'on' : 'off'} size={21} fill={isLiked ? 'currentColor' : 'none'} />
+          <span>{post.likes}</span>
         </button>
-        <button className="action" onClick={() => setShowComments((v) => !v)} aria-expanded={showComments}>
-          <MessageSquare size={19} /> {t('post.comment')}
+        <button className="action" onClick={() => setShowComments((v) => !v)} aria-expanded={showComments} aria-label={t('post.comment')}>
+          <MessageCircle size={21} />
+          <span>{post.comments.length}</span>
         </button>
-        <button className="action" onClick={() => sharePost(post.id)}>
-          <Share2 size={19} /> {t('post.share')}
+        <button className="action" onClick={() => sharePost(post.id)} aria-label={t('post.share')}>
+          <Share2 size={20} />
+          <span>{post.shares}</span>
         </button>
+        <span className="post__likes-label">{t('post.likesCount', { n: post.likes })}</span>
       </div>
 
       {showComments && (
@@ -133,13 +139,8 @@ export default function PostCard({ post }) {
           <form className="comment-form" onSubmit={submitComment}>
             <Avatar person={user} size={32} />
             <label className="sr-only" htmlFor={`comment-${post.id}`}>{t('post.commentLabel')}</label>
-            <input
-              id={`comment-${post.id}`}
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              placeholder={t('post.commentPh')}
-            />
-            <button type="submit" className="icon-btn icon-btn--blue" disabled={!draft.trim()} aria-label={t('post.sendComment')}>
+            <input id={`comment-${post.id}`} value={draft} onChange={(e) => setDraft(e.target.value)} placeholder={t('post.commentPh')} />
+            <button type="submit" className="icon-btn icon-btn--accent" disabled={!draft.trim()} aria-label={t('post.sendComment')}>
               <Send size={18} />
             </button>
           </form>

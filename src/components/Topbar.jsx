@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react';
 import { Bell, Bookmark, ChevronDown, FileText, LogOut, Menu, MessageCircle, Plus, Search, X } from 'lucide-react';
 import { useApp } from '../context/AppContext.jsx';
 import { useI18n } from '../i18n/LanguageContext.jsx';
@@ -5,7 +6,6 @@ import Avatar from './Avatar.jsx';
 import Dropdown from './Dropdown.jsx';
 import LanguageToggle from './LanguageToggle.jsx';
 import Logo from './Logo.jsx';
-import { TOP_TABS } from './navigation.js';
 
 export default function Topbar() {
   const {
@@ -13,6 +13,13 @@ export default function Topbar() {
     conversations, openConversation, getPerson, logout, setCreateType,
   } = useApp();
   const { t, tx, timeAgo } = useI18n();
+  const [searchOpen, setSearchOpen] = useState(false); // phones: search expands over the bar
+  const searchRef = useRef(null);
+
+  const openSearch = () => {
+    setSearchOpen(true);
+    setTimeout(() => searchRef.current?.focus(), 30);
+  };
 
   const unreadNotifications = notifications.filter((n) => !n.read).length;
   const unreadMessages = conversations.filter((c) => c.unread).length;
@@ -29,7 +36,7 @@ export default function Topbar() {
   };
 
   return (
-    <header className="topbar">
+    <header className={`topbar ${searchOpen ? 'is-searching' : ''}`}>
       <div className="topbar__left">
         <button className="icon-btn topbar__menu" onClick={() => setSidebarOpen(true)} aria-label={t('nav.openMenu')}>
           <Menu size={22} />
@@ -37,6 +44,9 @@ export default function Topbar() {
         <button className="topbar__brand" onClick={() => setView('home')} aria-label={t('topbar.goHome')}>
           <Logo size={36} />
         </button>
+      </div>
+
+      <div className="topbar__center">
         <form
           className="search"
           role="search"
@@ -51,6 +61,7 @@ export default function Topbar() {
             value={searchQuery}
             onChange={onSearchChange}
             placeholder={t('topbar.searchPh')}
+            ref={searchRef}
             aria-label={t('topbar.searchLabel')}
           />
           {searchQuery && (
@@ -59,27 +70,15 @@ export default function Topbar() {
             </button>
           )}
         </form>
+        <button type="button" className="icon-btn topbar__search-close" onClick={() => setSearchOpen(false)} aria-label={t('common.close')}>
+          <X size={20} />
+        </button>
       </div>
 
-      <nav className="topbar__tabs" aria-label={t('nav.mainSections')}>
-        {TOP_TABS.map(({ view: v, labelKey, icon: Icon, also = [] }) => {
-          const active = view === v || also.includes(view);
-          return (
-            <button
-              key={v}
-              className={`tab ${active ? 'tab--active' : ''}`}
-              onClick={() => setView(v)}
-              aria-current={active ? 'page' : undefined}
-              title={t(labelKey)}
-            >
-              <Icon size={24} />
-              <span className="sr-only">{t(labelKey)}</span>
-            </button>
-          );
-        })}
-      </nav>
-
       <div className="topbar__right">
+        <button type="button" className="round-btn topbar__search-btn" onClick={openSearch} aria-label={t('topbar.searchLabel')}>
+          <Search size={19} />
+        </button>
         <LanguageToggle />
 
         <button className="btn btn--primary btn--sm topbar__create" onClick={() => setCreateType('general')}>

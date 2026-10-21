@@ -6,6 +6,7 @@ import { LanguageProvider } from './i18n/LanguageContext.jsx';
 import './styles/base.css';
 import './styles/auth.css';
 import './styles/app.css';
+import './styles/stories.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

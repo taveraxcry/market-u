@@ -1,5 +1,7 @@
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import {
+  DEMO_CREDENTIALS,
+  DEMO_NAME,
   PEOPLE,
   SIMULATED_REPLIES,
   initialConversations,
@@ -8,6 +10,7 @@ import {
   initialPosts,
   initialProducts,
   initialServices,
+  initialStories,
 } from '../data/sampleData.js';
 import { useI18n } from '../i18n/LanguageContext.jsx';
 import { uid } from '../utils/format.js';
@@ -18,7 +21,13 @@ const SESSION_KEY = 'marketu:session';
 function readSession() {
   try {
     const raw = localStorage.getItem(SESSION_KEY);
-    return raw ? JSON.parse(raw) : null;
+    const session = raw ? JSON.parse(raw) : null;
+    // The demo account was renamed; update sessions saved before the change.
+    if (session && session.email === DEMO_CREDENTIALS.email) {
+      session.name = DEMO_NAME;
+      session.color = '#B8306F';
+    }
+    return session;
   } catch {
     return null;
   }
@@ -34,6 +43,15 @@ function writeSession(user) {
 }
 
 const itemKey = (kind, id) => `${kind}:${id}`;
+const SIDEBAR_KEY = 'marketu:sidebar-collapsed';
+
+function readCollapsed() {
+  try {
+    return localStorage.getItem(SIDEBAR_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
 
 export function AppProvider({ children }) {
   const { t, tAll } = useI18n();
@@ -41,6 +59,13 @@ export function AppProvider({ children }) {
   const [view, setViewState] = useState('home');
   const [searchQuery, setSearchQuery] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(readCollapsed);
+
+  const [stories, setStories] = useState(initialStories);
+  const [seenStories, setSeenStories] = useState(() => new Set());
+  const [likedStories, setLikedStories] = useState(() => new Set());
+  const [storyViewer, setStoryViewer] = useState(null); // { queue: personIds[], start, openId }
+  const [createStoryOpen, setCreateStoryOpen] = useState(false);
 
   const [posts, setPosts] = useState(initialPosts);
   const [products, setProducts] = useState(initialProducts);
@@ -105,6 +130,8 @@ export function AppProvider({ children }) {
     setDetail(null);
     setChatId(null);
     setCreateType(null);
+    setStoryViewer(null);
+    setCreateStoryOpen(false);
     setSearchQuery('');
     setViewState('home');
   }, []);
@@ -224,6 +251,89 @@ export function AppProvider({ children }) {
     setTimeout(() => append({ from: 'them', text: reply, at: Date.now(), simulated: true }), 1400);
   }, []);
 
+  // ---------- sidebar ----------
+  const toggleSidebar = useCallback(() => {
+    setSidebarCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem(SIDEBAR_KEY, next ? '1' : '0');
+      } catch {
+        /* storage unavailable */
+      }
+      return next;
+    });
+  }, []);
+
+  // ---------- stories ----------
+  const hasStory = useCallback((personId) => stories.some((s) => s.personId === personId && s.items.length), [stories]);
+
+  const isGroupSeen = useCallback(
+    (group) => group.items.every((it) => seenStories.has(it.id)),
+    [seenStories]
+  );
+
+  // Order like Instagram: your story first, then unseen, then seen.
+  const storyOrder = useMemo(() => {
+    const own = stories.filter((s) => s.personId === 'me');
+    const others = stories.filter((s) => s.personId !== 'me');
+    const unseen = others.filter((g) => !isGroupSeen(g));
+    const seen = others.filter((g) => isGroupSeen(g));
+    return [...own, ...unseen, ...seen];
+  }, [stories, isGroupSeen]);
+
+  const openStories = useCallback(
+    (personId) => {
+      const queue = storyOrder.map((g) => g.personId);
+      const start = Math.max(0, queue.indexOf(personId));
+      setStoryViewer({ queue, start, openId: Date.now() });
+    },
+    [storyOrder]
+  );
+
+  const closeStories = useCallback(() => setStoryViewer(null), []);
+
+  const markStorySeen = useCallback((id) => {
+    setSeenStories((prev) => (prev.has(id) ? prev : new Set(prev).add(id)));
+  }, []);
+
+  const toggleStoryLike = useCallback((id) => {
+    setLikedStories((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
+  const addStory = useCallback(
+    ({ text, bg, image }) => {
+      const item = { id: uid('st'), text, bg: image ? undefined : bg, image: image || null, createdAt: Date.now() };
+      setStories((list) => {
+        const own = list.find((g) => g.personId === 'me');
+        if (own) return list.map((g) => (g.personId === 'me' ? { ...g, items: [...g.items, item] } : g));
+        return [{ personId: 'me', items: [item] }, ...list];
+      });
+      setCreateStoryOpen(false);
+      notify(t('stories.published'));
+    },
+    [notify, t]
+  );
+
+  const replyToStory = useCallback(
+    (personId, text) => {
+      const existing = conversations.find((c) => c.itemRef?.kind === 'story' && c.itemRef?.id === personId);
+      let convId = existing?.id;
+      if (!convId) {
+        convId = uid('conv');
+        const conv = { id: convId, personId, itemRef: { kind: 'story', id: personId }, topic: tAll('stories.topic'), messages: [], unread: false };
+        setConversations((list) => [conv, ...list]);
+      }
+      sendMessage(convId, text);
+      notify(t('stories.replySent', { name: getPerson(personId).name }));
+    },
+    [conversations, sendMessage, notify, t, tAll, getPerson]
+  );
+
   // ---------- create publication ----------
   const createPublication = useCallback(
     (type, data) => {
@@ -331,7 +441,9 @@ export function AppProvider({ children }) {
   const value = useMemo(
     () => ({
       user, login, logout,
-      view, setView, searchQuery, setSearchQuery, sidebarOpen, setSidebarOpen,
+      view, setView, searchQuery, setSearchQuery, sidebarOpen, setSidebarOpen, sidebarCollapsed, toggleSidebar,
+      stories, storyOrder, hasStory, isGroupSeen, seenStories, likedStories, storyViewer, openStories, closeStories,
+      markStorySeen, toggleStoryLike, addStory, replyToStory, createStoryOpen, setCreateStoryOpen,
       posts, products, services, events,
       getPerson, findItem,
       liked, toggleLike, addComment, sharePost,
@@ -344,7 +456,9 @@ export function AppProvider({ children }) {
       toasts, notify, dismissToast,
     }),
     [
-      user, login, logout, view, setView, searchQuery, sidebarOpen, posts, products, services, events,
+      user, login, logout, view, setView, searchQuery, sidebarOpen, sidebarCollapsed, toggleSidebar,
+      stories, storyOrder, hasStory, isGroupSeen, seenStories, likedStories, storyViewer, openStories, closeStories,
+      markStorySeen, toggleStoryLike, addStory, replyToStory, createStoryOpen, posts, products, services, events,
       getPerson, findItem, liked, toggleLike, addComment, sharePost, toggleSave, isSaved, saved,
       interested, toggleInterest, notifications, markNotificationsRead, conversations, chatId,
       openContact, openConversation, sendMessage, detail, createType, createPublication, toasts, notify, dismissToast,

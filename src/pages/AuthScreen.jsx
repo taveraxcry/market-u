@@ -8,15 +8,15 @@ import Logo from '../components/Logo.jsx';
 import Modal from '../components/Modal.jsx';
 import SmartImage from '../components/SmartImage.jsx';
 import { useApp } from '../context/AppContext.jsx';
-import { DEMO_CREDENTIALS, UNIVERSITIES, initialEvents, initialProducts } from '../data/sampleData.js';
+import { DEMO_CREDENTIALS, DEMO_NAME, UNIVERSITIES, initialEvents, initialProducts } from '../data/sampleData.js';
 import { useI18n } from '../i18n/LanguageContext.jsx';
 import { formatCOP, isValidEmail } from '../utils/format.js';
 
-const AVATAR_COLORS = ['#3730A3', '#2563EB', '#7C3AED', '#0891B2', '#DB2777', '#059669'];
+const AVATAR_COLORS = ['#B8306F', '#7A3B9A', '#D4461F', '#1F8A5B', '#9A6200', '#34323D'];
 
 function nameFromEmail(email) {
   const local = email.split('@')[0].replace(/[._-]+/g, ' ').replace(/\d+/g, '').trim();
-  if (!local || email.toLowerCase() === DEMO_CREDENTIALS.email) return 'Sofía Martínez';
+  if (!local || email.toLowerCase() === DEMO_CREDENTIALS.email) return DEMO_NAME;
   return local
     .split(' ')
     .filter(Boolean)
@@ -100,7 +100,7 @@ function LoginForm({ onSwitch, onForgot }) {
           email,
           program: { es: 'Ingeniería de Sistemas', en: 'Systems Engineering' },
           university: 'Universidad Autónoma de Manizales',
-          color: '#3730A3',
+          color: '#B8306F',
         },
         form.remember
       );
@@ -338,7 +338,9 @@ export default function AuthScreen() {
         <div className="auth__hero-inner">
           <Logo size={44} light />
           <p className="tagline">Your University. Your Community. Your Market.</p>
-          <h1>{t('auth.headline')}</h1>
+          <h1>
+            {t('auth.headlineA')} <span className="hl">{t('auth.headlineB')}</span>
+          </h1>
           <p className="auth__lead">{t('auth.lead')}</p>
           <ul className="auth__features">
             <li><Store size={18} /> {t('auth.featMarket')}</li>

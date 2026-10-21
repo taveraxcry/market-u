@@ -28,8 +28,8 @@ export const CATEGORY_ICONS = {
 };
 
 export const CATEGORY_TINTS = {
-  Tecnología: ['#3730A3', '#2F7BFF'],
-  'Libros y estudio': ['#0E7490', '#22D3EE'],
+  Tecnología: ['#17161C', '#4A4754'],
+  'Libros y estudio': ['#9A6200', '#F5B000'],
   'Ropa y accesorios': ['#BE185D', '#F472B6'],
   Hogar: ['#92400E', '#F59E0B'],
   Deportes: ['#047857', '#34D399'],
@@ -37,10 +37,10 @@ export const CATEGORY_TINTS = {
   Otros: ['#334155', '#94A3B8'],
   Repostería: ['#BE123C', '#FDA4AF'],
   Artesanías: ['#7E22CE', '#C084FC'],
-  Tutorías: ['#1D4ED8', '#60A5FA'],
+  Tutorías: ['#7A3B9A', '#C2368C'],
   Diseño: ['#6D28D9', '#A78BFA'],
   'Fotografía y video': ['#0F172A', '#475569'],
-  Académicos: ['#1E3A8A', '#3B82F6'],
+  Académicos: ['#34323D', '#9A6200'],
   Culturales: ['#9D174D', '#F472B6'],
   Sociales: ['#0F766E', '#2DD4BF'],
   Emprendimiento: ['#B45309', '#FBBF24'],

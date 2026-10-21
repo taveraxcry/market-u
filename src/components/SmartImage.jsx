@@ -8,7 +8,7 @@ export default function SmartImage({ src, alt, category, className = '', label }
 
   if (!src || failed) {
     const Icon = iconFor(category);
-    const [from, to] = CATEGORY_TINTS[category] || ['#3730A3', '#2F7BFF'];
+    const [from, to] = CATEGORY_TINTS[category] || ['#D98F00', '#EF5D3A'];
     return (
       <div
         className={`smart-img smart-img--fallback ${className}`}
